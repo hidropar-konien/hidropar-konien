@@ -141,6 +141,8 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         line_amount -= partial_line.amount
 
                 if not self.env.user.company_id.currency_id.is_zero(line_amount):
+                    if not partners_amount[partner_id]:
+                        continue
                     partners_amount[partner_id] += line_amount or 0
                     lines[partner_id].append({
                         'line': line,

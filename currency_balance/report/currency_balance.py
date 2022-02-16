@@ -77,18 +77,22 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
         aml_ids = cr.fetchall()
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
         for line in self.env['account.move.line'].browse(aml_ids):
+
+            currency_rate = self.env['res.currency.rate'].search(
+                [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
                 undue_amounts[partner_id] = 0.0
-            line_amount = line.balance
+            line_amount = line.balance * currency_rate.rate
             if line.balance == 0:
                 continue
             for partial_line in line.matched_debit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount += partial_line.amount
+                    line_amount += partial_line.amount * currency_rate.rate
             for partial_line in line.matched_credit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount -= partial_line.amount
+                    line_amount -= partial_line.amount * currency_rate.rate
             if not self.env.user.company_id.currency_id.is_zero(line_amount):
                 undue_amounts[partner_id] += line_amount
                 lines[partner_id].append({
@@ -129,7 +133,10 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 partner_id = line.partner_id.id or False
                 if partner_id not in partners_amount:
                     partners_amount[partner_id] = 0.0
-                currency_rate = self.env['res.currency.rate'].search([('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+
+                currency_rate = self.env['res.currency.rate'].search(
+                    [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+
                 line_amount = line.balance * currency_rate.rate
                 if line.balance == 0:
                     continue
@@ -155,8 +162,6 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             if partner['partner_id'] is None:
                 partner['partner_id'] = False
             at_least_one_amount = False
-            # currency = self.env['res.currency'].search([('id', '=', currency_id[0])])
-            # partner['currency'] = currency_id[0]
             values = {}
             undue_amt = 0.0
             if partner['partner_id'] in undue_amounts:  # Making sure this partner actually was found by the query

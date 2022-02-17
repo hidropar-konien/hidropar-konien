@@ -13,6 +13,7 @@
                     <newline/>
                     <field name="result_selection" widget="radio"/>
                     <field name="target_move" widget="radio"/>
+                    <field name="direction_selection"/>
                     <field name="currency_id"/>
                 </group>
                 <field name="journal_ids" required="0" invisible="1"/>

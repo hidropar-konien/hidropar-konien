@@ -13,17 +13,26 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
     _name = 'report.currency_balance.report_agedpartnercurrencybalance'
 
-    def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id):
+    def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id, direction_selection):
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
         for i in range(5)[::-1]:
-            stop = start - relativedelta(days=period_length)
-            periods[str(i)] = {
-                'name': (i != 0 and (str((5-(i+1)) * period_length) + '-' + str((5-i) * period_length)) or ('+'+str(4 * period_length))),
-                'stop': start.strftime('%Y-%m-%d'),
-                'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
-            }
-            start = stop - relativedelta(days=1)
+            if direction_selection == 'past':
+                stop = start - relativedelta(days=period_length)
+                periods[str(i)] = {
+                    'name': (i != 0 and (str((5-(i+1)) * period_length) + '-' + str((5-i) * period_length)) or ('+'+str(4 * period_length))),
+                    'stop': start.strftime('%Y-%m-%d'),
+                    'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
+                }
+                start = stop - relativedelta(days=1)
+            elif direction_selection == 'future':
+                stop = start + relativedelta(days=period_length)
+                periods[str(i)] = {
+                    'name': (i != 0 and (str((5-(i+1)) * period_length) + '-' + str((5-i) * period_length)) or ('+'+str(4 * period_length))),
+                    'stop': start.strftime('%Y-%m-%d'),
+                    'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
+                }
+                start = stop + relativedelta(days=1)
 
         res = []
         total = []
@@ -77,9 +86,19 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
         aml_ids = cr.fetchall()
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
         for line in self.env['account.move.line'].browse(aml_ids):
+            # Müşteri kartlarındaki customer_currency_rate_type_id alınacak, boş olanları doviz satış
+            #line.move_id.currency_id.customer_currency_rate_type_id
+            #if line.currency_id.id == currency_id:
+                # öncelikle ft nın hangi döviz tipinde kesildiğini öğreniyoruz. sonra rapordaki döviz cinsi kuru ile hesaplayıp rate i hesaplıyoruz.
 
-            currency_rate = self.env['res.currency.rate'].search(
-                [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+            if 'customer_currency_rate_type_id' not in line.move_id.partner_id.fields_get():
+                currency_rate = self.env['res.currency.rate'].search(
+                    [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+            else:
+                currency_rate = self.env['res.currency.rate'].search(
+                    [('currency_id', '=', currency_id[0]), ('name', '<=', line.date),
+                     ('id', '=', line.move_id.partner_id.customer_currency_rate_type_id.id)], limit=1)
+
 
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
@@ -134,8 +153,16 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 if partner_id not in partners_amount:
                     partners_amount[partner_id] = 0.0
 
-                currency_rate = self.env['res.currency.rate'].search(
-                    [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+                # currency_rate = self.env['res.currency.rate'].search(
+                #     [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+
+                if 'customer_currency_rate_type_id' not in line.move_id.partner_id.fields_get():
+                    currency_rate = self.env['res.currency.rate'].search(
+                        [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
+                else:
+                    currency_rate = self.env['res.currency.rate'].search(
+                        [('currency_id', '=', currency_id[0]), ('name', '<=', line.date),
+                         ('id', '=', line.move_id.partner_id.customer_currency_rate_type_id.id)], limit=1)
 
                 line_amount = line.balance * currency_rate.rate
                 if line.balance == 0:
@@ -216,7 +243,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
         else:
             account_type = ['payable', 'receivable']
 
-        movelines, total, dummy, currency_id = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form'].get('currency_id'))
+        movelines, total, dummy, currency_id = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form'].get('currency_id'), data['form'].get('direction_selection'))
         return {
             'doc_ids': self.ids,
             'doc_model': model,

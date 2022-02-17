@@ -87,18 +87,13 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
         for line in self.env['account.move.line'].browse(aml_ids):
             # Müşteri kartlarındaki customer_currency_rate_type_id alınacak, boş olanları doviz satış
-            #line.move_id.currency_id.customer_currency_rate_type_id
-            #if line.currency_id.id == currency_id:
-                # öncelikle ft nın hangi döviz tipinde kesildiğini öğreniyoruz. sonra rapordaki döviz cinsi kuru ile hesaplayıp rate i hesaplıyoruz.
-
-            if 'customer_currency_rate_type_id' not in line.move_id.partner_id.fields_get():
-                currency_rate = self.env['res.currency.rate'].search(
-                    [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
-            else:
+            if line.move_id.partner_id.customer_currency_rate_type_id:
                 currency_rate = self.env['res.currency.rate'].search(
                     [('currency_id', '=', currency_id[0]), ('name', '<=', line.date),
-                     ('id', '=', line.move_id.partner_id.customer_currency_rate_type_id.id)], limit=1)
-
+                     ('currency_rate_type_id', '=', line.move_id.partner_id.customer_currency_rate_type_id.id)], limit=1)
+            else:
+                currency_rate = self.env['res.currency.rate'].search(
+                    [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1, order="rate asc")
 
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
@@ -153,16 +148,14 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 if partner_id not in partners_amount:
                     partners_amount[partner_id] = 0.0
 
-                # currency_rate = self.env['res.currency.rate'].search(
-                #     [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
-
-                if 'customer_currency_rate_type_id' not in line.move_id.partner_id.fields_get():
-                    currency_rate = self.env['res.currency.rate'].search(
-                        [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1)
-                else:
+                if line.move_id.partner_id.customer_currency_rate_type_id:
                     currency_rate = self.env['res.currency.rate'].search(
                         [('currency_id', '=', currency_id[0]), ('name', '<=', line.date),
-                         ('id', '=', line.move_id.partner_id.customer_currency_rate_type_id.id)], limit=1)
+                         ('currency_rate_type_id', '=', line.move_id.partner_id.customer_currency_rate_type_id.id)],
+                        limit=1)
+                else:
+                    currency_rate = self.env['res.currency.rate'].search(
+                        [('currency_id', '=', currency_id[0]), ('name', '<=', line.date)], limit=1, order="rate asc")
 
                 line_amount = line.balance * currency_rate.rate
                 if line.balance == 0:

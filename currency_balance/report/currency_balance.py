@@ -229,7 +229,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
                 if periods[str(i)]['start'] and periods[str(i)]['stop']:
                     dates_query += ' BETWEEN %s AND %s)'
-                    args_list += (periods[str(i)]['start'], periods[str(i)]['stop'])
+                    args_list += (periods[str(i)]['stop'], periods[str(i)]['start'])
                 elif periods[str(i)]['start']:
                     dates_query += ' <= %s)'
                     args_list += (periods[str(i)]['start'],)
@@ -238,15 +238,29 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                     args_list += (periods[str(i)]['stop'],)
                 args_list += (date_from, tuple(company_ids))
 
+                # query = '''SELECT l.id
+                #         FROM account_move_line AS l, account_account, account_move am, account_invoice ai
+                #         WHERE (l.account_id = account_account.id) AND (l.move_id = am.id)
+                #             AND (am.state IN %s)
+                #             AND (account_account.internal_type IN %s)
+                #             AND ((l.partner_id IN %s) OR (l.partner_id IS NULL))
+                #             AND ''' + dates_query + '''
+                #         AND (ai.date_due  >= %s)
+                #         AND l.company_id IN %s'''
+
                 query = '''SELECT l.id
-                        FROM account_move_line AS l, account_account, account_move am, account_invoice ai
-                        WHERE (l.account_id = account_account.id) AND (l.move_id = am.id)
-                            AND (am.state IN %s)
-                            AND (account_account.internal_type IN %s)
-                            AND ((l.partner_id IN %s) OR (l.partner_id IS NULL))
-                            AND ''' + dates_query + '''
+                                FROM account_move_line AS l
+                                join account_move as am on l.move_id = am.id
+                                join account_account as aa on l.account_id = aa.id
+                                join account_invoice as ai on am.id = ai.move_id
+                                WHERE (l.account_id = aa.id) AND (l.move_id = am.id)
+                                    AND (am.state IN %s)
+                                    AND (aa.internal_type IN %s)
+                                    AND ((l.partner_id IN %s) OR (l.partner_id IS NULL))
+                                    AND ''' + dates_query + '''
                         AND (ai.date_due  >= %s)
                         AND l.company_id IN %s'''
+
                 cr.execute(query, args_list)
                 partners_amount = {}
                 aml_ids = cr.fetchall()
@@ -274,7 +288,6 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                     for partial_line in line.matched_credit_ids:
                         if partial_line.max_date <= date_from:
                             line_amount -= partial_line.amount * currency_rate.rate
-
 
                     if not self.env.user.company_id.currency_id.is_zero(line_amount):
                         partners_amount[partner_id] += line_amount or 0
@@ -357,6 +370,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             'get_partner_lines': movelines,
             'get_direction': total,
             'currency': currency_id,
-            'partner': partner
+            'partner': partner,
+            'direction_selection': data['form'].get('direction_selection')
         }
 

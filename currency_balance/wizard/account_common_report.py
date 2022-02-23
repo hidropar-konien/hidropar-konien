@@ -33,5 +33,3 @@ class AccountCommonReport(models.TransientModel):
         used_context = self._build_contexts(data)
         data['form']['used_context'] = dict(used_context, lang=self.env.context.get('lang') or 'en_US')
         return self._print_report(data)
-
-

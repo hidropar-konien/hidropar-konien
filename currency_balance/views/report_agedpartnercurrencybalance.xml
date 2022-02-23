@@ -5,7 +5,7 @@
             model="res.partner"
             string="Aged Partner Currency Balance"
             menu="False"
-            report_type="qweb-pdf"
+            report_type="qweb-html"
             name="currency_balance.report_agedpartnercurrencybalance"
             file="currency_balance.report_agedpartnercurrencybalance"
         />
@@ -54,7 +54,7 @@
                             <th class="text-right"><span t-esc="data['2']['name']"/></th>
                             <th class="text-right"><span t-esc="data['1']['name']"/></th>
                             <th class="text-right"><span t-esc="data['0']['name']"/></th>
-                            <th class="text-right">Total</th>
+                            <th class="text-right" t-if="direction_selection== 'past'">Total</th>
                         </tr>
                         <tr t-if="get_partner_lines">
                             <th>Account Total</th>
@@ -64,7 +64,7 @@
                             <th class="text-right"><span t-esc="get_direction[2]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
                             <th class="text-right"><span t-esc="get_direction[1]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
                             <th class="text-right"><span t-esc="get_direction[0]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-                            <th class="text-right"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+                            <th class="text-right" t-if="direction_selection== 'past'"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,7 +90,7 @@
                             <td class="text-right">
                                 <span t-esc="partner['0']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
                             </td>
-                            <td class="text-right">
+                            <td class="text-right" t-if="direction_selection== 'past'">
                                 <span t-esc="partner['total']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
                             </td>
                         </tr>

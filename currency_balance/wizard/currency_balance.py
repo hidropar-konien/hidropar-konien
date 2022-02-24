@@ -4,7 +4,7 @@
 import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from odoo import fields, models, _
+from odoo import fields, models, api,_
 from odoo.exceptions import UserError
 
 
@@ -14,12 +14,17 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
     _inherit = 'account.common.partner.report'
     _description = 'Account Aged Trial Currency Balance Report'
 
+    @api.model
+    def _default_currency(self):
+        return self.env['res.currency'].search([('name', '=', 'EUR')])
+
     period_length = fields.Integer(string='Period Length (days)', required=True, default=30)
     journal_ids = fields.Many2many('account.journal', string='Journals', required=True)
     date_from = fields.Date(default=lambda *a: time.strftime('%Y-%m-%d'))
-    currency_id = fields.Many2one('res.currency', 'Currency')
+    currency_id = fields.Many2one('res.currency', 'Currency', default=_default_currency, domain=[('name', '!=', 'TRY')])
     direction_selection = fields.Selection([('past', 'Past'), ('future', 'Future')], "Direction Selection", defualt='past')
     partner = fields.Many2one('res.partner', 'Partner')
+
 
     def _print_report(self, data):
         res = {}

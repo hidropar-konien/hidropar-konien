@@ -174,10 +174,10 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                     if not self.env.user.company_id.currency_id.is_zero(line_amount):
                         # if not partners_amount[partner_id]:
                         #     continue
-                        partners_amount[partner_id] += line_amount or 0
+                        partners_amount[partner_id] += line_amount
                         lines[partner_id].append({
                             'line': line,
-                            'amount': line_amount or 0,
+                            'amount': line_amount,
                             'period': i + 1,
                             })
                 history.append(partners_amount)

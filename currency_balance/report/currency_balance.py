@@ -101,15 +101,15 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
                 undue_amounts[partner_id] = 0.0
-            line_amount = line.balance * currency_rate.rate
+            line_amount = line.balance * (currency_rate.rate or 1)
             if line.balance == 0:
                 continue
             for partial_line in line.matched_debit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount += partial_line.amount * currency_rate.rate
+                    line_amount += partial_line.amount * (currency_rate.rate or 1)
             for partial_line in line.matched_credit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount -= partial_line.amount * currency_rate.rate
+                    line_amount -= partial_line.amount * (currency_rate.rate or 1)
             if not self.env.user.company_id.currency_id.is_zero(line_amount):
                 undue_amounts[partner_id] += line_amount
                 lines[partner_id].append({
@@ -161,15 +161,15 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         currency_rate = self.env['res.currency.rate'].search(
                             [('currency_id', '=', currency_id[0]), ('name', '<=', line.date),
                              ('currency_rate_type_id', '=', 2)], limit=1, order="rate asc")
-                    line_amount = line.balance * currency_rate.rate
+                    line_amount = line.balance * (currency_rate.rate or 1)
                     if line.balance == 0:
                         continue
                     for partial_line in line.matched_debit_ids:
                         if partial_line.max_date <= date_from:
-                            line_amount += partial_line.amount * currency_rate.rate
+                            line_amount += partial_line.amount * (currency_rate.rate or 1)
                     for partial_line in line.matched_credit_ids:
                         if partial_line.max_date <= date_from:
-                            line_amount -= partial_line.amount * currency_rate.rate
+                            line_amount -= partial_line.amount * (currency_rate.rate or 1)
 
                     if not self.env.user.company_id.currency_id.is_zero(line_amount):
                         # if not partners_amount[partner_id]:
@@ -279,15 +279,15 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         currency_rate = self.env['res.currency.rate'].search(
                             [('currency_id', '=', currency_id[0]), ('name', '<=', line.date),
                              ('currency_rate_type_id', '=', 2)], limit=1, order="rate asc")
-                    line_amount = line.balance * currency_rate.rate
+                    line_amount = line.balance * (currency_rate.rate or 1)
                     if line.balance == 0:
                         continue
                     for partial_line in line.matched_debit_ids:
                         if partial_line.max_date <= date_from:
-                            line_amount += partial_line.amount * currency_rate.rate
+                            line_amount += partial_line.amount * (currency_rate.rate or 1)
                     for partial_line in line.matched_credit_ids:
                         if partial_line.max_date <= date_from:
-                            line_amount -= partial_line.amount * currency_rate.rate
+                            line_amount -= partial_line.amount * (currency_rate.rate or 1)
 
                     if not self.env.user.company_id.currency_id.is_zero(line_amount):
                         partners_amount[partner_id] += line_amount or 0

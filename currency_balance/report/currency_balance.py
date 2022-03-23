@@ -166,10 +166,10 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         continue
                     for partial_line in line.matched_debit_ids:
                         if partial_line.max_date <= date_from:
-                            line_amount += partial_line.amount * (currency_rate.rate or 1)
+                            line_amount += partial_line.amount * (currency_rate.rate or 1) or 0
                     for partial_line in line.matched_credit_ids:
                         if partial_line.max_date <= date_from:
-                            line_amount -= partial_line.amount * (currency_rate.rate or 1)
+                            line_amount -= partial_line.amount * (currency_rate.rate or 1) or 0
 
                     if not self.env.user.company_id.currency_id.is_zero(line_amount):
                         # if not partners_amount[partner_id]:

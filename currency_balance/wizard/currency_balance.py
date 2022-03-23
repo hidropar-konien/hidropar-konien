@@ -21,7 +21,8 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
     period_length = fields.Integer(string='Period Length (days)', required=True, default=30)
     journal_ids = fields.Many2many('account.journal', string='Journals', required=True)
     date_from = fields.Date(default=lambda *a: time.strftime('%Y-%m-%d'))
-    currency_id = fields.Many2one('res.currency', 'Currency', default=_default_currency, domain=[('name', '!=', 'TRY')])
+    # currency_id = fields.Many2one('res.currency', 'Currency', default=_default_currency, domain=[('name', '!=', 'TRY')])
+    currency_id = fields.Many2one('res.currency', 'Currency', default=_default_currency)
     direction_selection = fields.Selection([('past', 'Past'), ('future', 'Future')], "Direction Selection", defualt='past')
     partner = fields.Many2one('res.partner', 'Partner')
 

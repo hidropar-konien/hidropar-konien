@@ -2,6 +2,9 @@
 # Copyright 2021 Konien Ltd.Şti.
 
 import time
+
+from docutils.nodes import contact
+
 from odoo import api, models, _
 from odoo.exceptions import UserError
 from odoo.tools import float_is_zero
@@ -13,7 +16,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
     _name = 'report.currency_balance.report_agedpartnercurrencybalance'
 
-    def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id, direction_selection, partner):
+    def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id, direction_selection, contact):
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
         for i in range(5)[::-1]:
@@ -51,7 +54,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             reconciliation_clause = '(l.reconciled IS FALSE OR l.id IN %s)'
             arg_list += (tuple(reconciled_after_date),)
 
-        partner_id = ('''AND am.partner_id = %s''' % partner[0]) if partner else ''
+        partner_id = ('''AND am.partner_id = %s''' % contact[0]) if contact else ''
         arg_list += (date_from, tuple(company_ids))
         query = '''
             SELECT DISTINCT l.partner_id, UPPER(res_partner.name)
@@ -175,14 +178,11 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         # if not partners_amount[partner_id]:
                         #     continue
                         partners_amount[partner_id] += line_amount
-                        try:
-                            lines[partner_id].append({
-                                'line': line,
-                                'amount': line_amount,
-                                'period': i + 1,
-                                })
-                        except Exception as e:
-                            raise UserError('Line False: %s %s' % (lines, e))
+                        lines[partner_id].append({
+                            'line': line,
+                            'amount': line_amount,
+                            'period': i + 1,
+                            })
                 history.append(partners_amount)
 
             for partner in partners:

@@ -56,7 +56,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
         # partner_id = ('''AND am.partner_id = %s''' % partner[0]) if partner else ''
         if res_partner:
-            partners = [{'partner_id': res_partner[0]}]
+            partners = [{'partner_id': res_partner[0]},]
         else:
             arg_list += (date_from, tuple(company_ids))
             query = '''
@@ -225,7 +225,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
                 if at_least_one_amount or (self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                     res.append(values)
-            return res, total, lines, currency, partner
+            return res, total, lines, currency, res_partner
 
         elif direction_selection == 'future':
             for i in range(5):
@@ -345,7 +345,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 if at_least_one_amount or (
                         self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                     res.append(values)
-            return res, total, lines, currency, partner
+            return res, total, lines, currency, res_partner
 
     @api.model
     def get_report_values(self, docids, data=None):

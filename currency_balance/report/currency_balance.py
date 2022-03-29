@@ -378,4 +378,3 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             'partner': partner,
             'direction_selection': data['form'].get('direction_selection')
         }
-

@@ -20,7 +20,7 @@ class AccountCommonReport(models.TransientModel):
         result['strict_range'] = True if result['date_from'] else False
         result['currency_id'] = data['form']['currency_id'] or False
         result['direction_selection'] = data['form']['direction_selection'] or False
-        result['currency_id'] = data['form']['partner'] or False
+        result['partner'] = data['form']['partner'] or False
         return result
 
     @api.multi

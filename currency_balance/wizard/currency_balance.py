@@ -26,6 +26,9 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
     partner = fields.Many2one('res.partner', 'Partner')
 
     def _print_report(self, data):
+        # partner = data['form']['partner']
+        # raise UserError(partner)
+        # raise UserError(data.get('form').get('partner'))
         res = {}
         data = self.pre_print_report(data)
         data['form'].update(self.read(['period_length'])[0])
@@ -37,6 +40,7 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
 
         start = datetime.strptime(data['form']['date_from'], "%Y-%m-%d")
         currency_id = data['form']['currency_id']
+        partner = data['form']['partner']
 
         for i in range(5)[::-1]:
             # if data['form']['direction_selection'] == 'past':
@@ -46,7 +50,7 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
                 'stop': start.strftime('%Y-%m-%d'),
                 'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
                 'currency': currency_id,
-                'partner': data['form']['partner']
+                'partner': partner
             }
             start = stop - relativedelta(days=1)
             # elif data['form']['direction_selection'] == 'future':

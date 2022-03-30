@@ -365,7 +365,8 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
         else:
             account_type = ['payable', 'receivable']
 
-        movelines, total, dummy, currency_id, partner = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form'].get('currency_id'), data['form'].get('direction_selection'), data['form'].get('partner'))
+        movelines, total, dummy, currency_id, partner = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form']['currency_id'], data['form']['direction_selection'], data['form']['partner'])
+
         return {
             'doc_ids': self.ids,
             'doc_model': model,

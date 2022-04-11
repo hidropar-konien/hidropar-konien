@@ -10,7 +10,7 @@ from odoo.exceptions import UserError
 
 class AccountAgedTrialCurrencyBalance(models.TransientModel):
 
-    _name = 'account.aged.trial.currency.balance'
+    _name = 'konien.account.aged.trial.currency.balance'
     _inherit = 'account.common.partner.report'
     _description = 'Account Aged Trial Currency Balance Report'
 

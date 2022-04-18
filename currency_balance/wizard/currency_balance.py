@@ -49,6 +49,9 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
         res = {}
         data = self.pre_print_report(data)
         data['form'].update(self.read(['period_length'])[0])
+        data['form'].update(self.read(['currency_id'])[0])
+        data['form'].update(self.read(['partner'])[0])
+
         period_length = data['form']['period_length']
         if period_length <= 0:
             raise UserError(_('You must set a period length greater than 0.'))
@@ -60,26 +63,17 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
         partner = data['form']['partner']
 
         for i in range(5)[::-1]:
-            # if data['form']['direction_selection'] == 'past':
             stop = start - relativedelta(days=period_length - 1)
             res[str(i)] = {
                 'name': (i != 0 and (str((5-(i+1)) * period_length) + '-' + str((5-i) * period_length)) or ('+'+str(4 * period_length))),
                 'stop': start.strftime('%Y-%m-%d'),
                 'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
                 'currency': currency_id,
-                'partner': partner
+                'partner': partner,
+                'direction_selection': data['form']['direction_selection'],
+                'result_selection': data['form']['result_selection']
             }
             start = stop - relativedelta(days=1)
-            # elif data['form']['direction_selection'] == 'future':
-            #     stop = start + relativedelta(days=period_length - 1)
-            #     res[str(i)] = {
-            #         'name': (i != 0 and (str((5 - (i + 1)) * period_length) + '-' + str((5 - i) * period_length)) or (
-            #                     '+' + str(4 * period_length))),
-            #         'stop': start.strftime('%Y-%m-%d'),
-            #         'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
-            #         'currency': currency_id
-            #     }
-            #     start = stop + relativedelta(days=1)
         data['form'].update(res)
         return self.env.ref('currency_balance.action_report_aged_partner_currency_balance').with_context(landscape=True).report_action(self, data=data)
 

@@ -4,7 +4,7 @@
 import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from odoo import fields, models, api,_
+from odoo import fields, models, api, _
 from odoo.exceptions import UserError
 
 
@@ -24,6 +24,23 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
     currency_id = fields.Many2one('res.currency', 'Currency', default=_default_currency, domain=[('name', '!=', 'TRY')])
     direction_selection = fields.Selection([('past', 'Past'), ('future', 'Future')], "Direction Selection", defualt='past')
     partner = fields.Many2one('res.partner', 'Partner')
+
+    @api.multi
+    def check_report(self):
+        self.ensure_one()
+        data = {'ids': self.env.context.get('active_ids', []),
+                'model': self.env.context.get('active_model', 'ir.ui.menu'),
+                'form': self.read(['date_from', 'date_to', 'journal_ids', 'target_move', 'currency_id', 'partner', 'direction_selection', 'result_selection'])[0]}
+        used_context = self._build_contexts(data)
+        data['form']['used_context'] = dict(used_context, lang=self.env.context.get('lang') or 'en_US')
+        return self._print_report(data)
+
+    def pre_print_report(self, data):
+        data['form'].update(self.read(['result_selection'])[0])
+        data['form'].update(self.read(['partner'])[0])
+        data['form'].update(self.read(['direction_selection'])[0])
+        data['form'].update(self.read(['currency_id'])[0])
+        return data
 
     def _print_report(self, data):
         # partner = data['form']['partner']

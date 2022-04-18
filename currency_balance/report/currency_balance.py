@@ -345,7 +345,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 if at_least_one_amount or (
                         self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                     res.append(values)
-            return res, total, lines, currency, res_partner
+            return res, total, lines, currency, res_partner, direction_selection
 
     @api.model
     def get_report_values(self, docids, data=None):
@@ -365,7 +365,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
         else:
             account_type = ['payable', 'receivable']
 
-        movelines, total, dummy, currency_id, partner = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form']['currency_id'], data['form']['direction_selection'], data['form']['partner'])
+        movelines, total, dummy, currency_id, partner, direction_selection = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form']['currency_id'], data['form']['direction_selection'], data['form']['partner'])
 
         return {
             'doc_ids': self.ids,

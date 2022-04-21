@@ -76,9 +76,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
         # put a total of 0
         for i in range(7):
             total.append(0)
-
-        partner_ids = [partner['partner_id'] for partner in partners if partner['partner_id']][0] if res_partner else [
-            partner['partner_id'] for partner in partners if partner['partner_id']]
+        partner_ids = [partner['partner_id'] for partner in partners if partner['partner_id']]
         lines = dict((partner['partner_id'] or False, []) for partner in partners)
         if not partner_ids:
             return [], [], {}, None, None
@@ -182,11 +180,12 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         # if not partners_amount[partner_id]:
                         #     continue
                         partners_amount[partner_id] += line_amount
-                        lines[partner_id].append({
-                            'line': line,
-                            'amount': line_amount,
-                            'period': i + 1,
-                            })
+                        if lines[partner_id] == partner_id:
+                            lines[partner_id].append({
+                                'line': line,
+                                'amount': line_amount,
+                                'period': i + 1,
+                                })
                 history.append(partners_amount)
 
             for partner in partners:

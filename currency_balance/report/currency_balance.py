@@ -178,13 +178,15 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         if partial_line.max_date <= date_from:
                             line_amount -= partial_line.amount * (currency_rate.rate or 1) or 0
 
-                    # if not self.env.user.company_id.currency_id.is_zero(line_amount):
-                    #     partners_amount[partner_id] += line_amount
-                    #     lines[partner_id].append({
-                    #         'line': line,
-                    #         'amount': line_amount,
-                    #         'period': i + 1,
-                    #         })
+                    if not self.env.user.company_id.currency_id.is_zero(line_amount):
+                        # if not partners_amount[partner_id]:
+                        #     continue
+                        partners_amount[partner_id] += line_amount
+                        lines[partner_id].append({
+                            'line': line,
+                            'amount': line_amount,
+                            'period': i + 1,
+                            })
                 history.append(partners_amount)
 
             for partner in partners:
@@ -193,7 +195,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 at_least_one_amount = False
                 values = {}
                 undue_amt = 0.0
-                if partner['partner_id'] in undue_amounts:
+                if partner['partner_id'] in undue_amounts:  # Making sure this partner actually was found by the query
                     undue_amt = undue_amounts[partner['partner_id']]
 
                 total[6] = total[6] + undue_amt

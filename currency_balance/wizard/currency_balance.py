@@ -4,11 +4,8 @@
 import time
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-<<<<<<< HEAD
 from odoo import fields, models, api, _
-=======
 from odoo import fields, models, _
->>>>>>> parent of eab8151... [UPD] - default verrency add
 from odoo.exceptions import UserError
 
 
@@ -18,14 +15,17 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
     _inherit = 'account.common.partner.report'
     _description = 'Account Aged Trial Currency Balance Report'
 
+    @api.model
+    def _default_currency(self):
+        return self.env['res.currency'].search([('name', '=', 'EUR')])
+
     period_length = fields.Integer(string='Period Length (days)', required=True, default=30)
     journal_ids = fields.Many2many('account.journal', string='Journals', required=True)
     date_from = fields.Date(default=lambda *a: time.strftime('%Y-%m-%d'))
-    currency_id = fields.Many2one('res.currency', 'Currency')
+    currency_id = fields.Many2one('res.currency', 'Currency', default=_default_currency)
     direction_selection = fields.Selection([('past', 'Past'), ('future', 'Future')], "Direction Selection", defualt='past')
     partner = fields.Many2one('res.partner', 'Partner')
 
-<<<<<<< HEAD
     @api.multi
     def check_report(self):
         self.ensure_one()
@@ -43,8 +43,6 @@ class AccountAgedTrialCurrencyBalance(models.TransientModel):
         data['form'].update(self.read(['currency_id'])[0])
         return data
 
-=======
->>>>>>> parent of eab8151... [UPD] - default verrency add
     def _print_report(self, data):
         res = {}
         data = self.pre_print_report(data)

@@ -180,7 +180,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                         # if not partners_amount[partner_id]:
                         #     continue
                         partners_amount[partner_id] += line_amount
-                        if lines[partner_id] == partner_id:
+                        if lines[partner_id]:
                             lines[partner_id].append({
                                 'line': line,
                                 'amount': line_amount,

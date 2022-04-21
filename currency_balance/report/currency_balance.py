@@ -16,7 +16,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
     _name = 'report.currency_balance.report_agedpartnercurrencybalance'
 
-    def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id, direction_selection, res_partner_id):
+    def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id, direction_selection, res_partner):
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
         for i in range(5)[::-1]:
@@ -54,31 +54,31 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             reconciliation_clause = '(l.reconciled IS FALSE OR l.id IN %s)'
             arg_list += (tuple(reconciled_after_date),)
 
-        selected_partner_id = ('''AND am.partner_id = %s''' % res_partner_id[0]) if res_partner_id else ''
-        # if res_partner_id:
-        #     partners = [{'partner_id': res_partner_id[0]},]
-        # else:
-        arg_list += (date_from, tuple(company_ids))
-        query = '''
-            SELECT DISTINCT l.partner_id, UPPER(res_partner.name)
-            FROM account_move_line AS l left join res_partner on l.partner_id = res_partner.id, account_account, account_move am
-            WHERE (l.account_id = account_account.id)
-                AND (l.move_id = am.id)
-                AND (am.state IN %s)
-                AND (account_account.internal_type IN %s)
-                AND ''' + reconciliation_clause + '''
-                AND (l.date <= %s)
-                AND l.company_id IN %s
-                '''+selected_partner_id+'''
-            ORDER BY UPPER(res_partner.name)'''
+        # partner_id = ('''AND am.partner_id = %s''' % partner[0]) if partner else ''
+        if res_partner:
+            partners = [{'partner_id': res_partner[0]},]
+        else:
+            arg_list += (date_from, tuple(company_ids))
+            query = '''
+                SELECT DISTINCT l.partner_id, UPPER(res_partner.name)
+                FROM account_move_line AS l left join res_partner on l.partner_id = res_partner.id, account_account, account_move am
+                WHERE (l.account_id = account_account.id)
+                    AND (l.move_id = am.id)
+                    AND (am.state IN %s)
+                    AND (account_account.internal_type IN %s)
+                    AND ''' + reconciliation_clause + '''
+                    AND (l.date <= %s)
+                    AND l.company_id IN %s
+                ORDER BY UPPER(res_partner.name)'''
             # '''+partner_id+'''
-        cr.execute(query, arg_list)
-        partners = cr.dictfetchall()
+            cr.execute(query, arg_list)
+            partners = cr.dictfetchall()
         # put a total of 0
         for i in range(7):
             total.append(0)
-        partner_ids = [partner['partner_id'] for partner in partners if partner['partner_id']]
 
+        partner_ids = [partner['partner_id'] for partner in partners if partner['partner_id']][0] if res_partner else [
+            partner['partner_id'] for partner in partners if partner['partner_id']]
         lines = dict((partner['partner_id'] or False, []) for partner in partners)
         if not partner_ids:
             return [], [], {}, None, None
@@ -227,7 +227,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
                 if at_least_one_amount or (self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                     res.append(values)
-            return res, total, lines, currency, res_partner_id
+            return res, total, lines, currency, res_partner
 
         elif direction_selection == 'future':
             for i in range(5):
@@ -347,11 +347,10 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 if at_least_one_amount or (
                         self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                     res.append(values)
-            return res, total, lines, currency, res_partner_id
+            return res, total, lines, currency, res_partner
 
     @api.model
     def get_report_values(self, docids, data=None):
-        # raise UserError(data.get('form').get('partner'))
         if not data.get('form') or not self.env.context.get('active_model') or not self.env.context.get('active_id'):
             raise UserError(_("Form content is missing, this report cannot be printed."))
         total = []

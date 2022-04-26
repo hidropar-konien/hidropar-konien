@@ -7,8 +7,8 @@
                     string="Aged Partner Currency Balance"
                     menu="False"
                     report_type="qweb-html"
-                    name="report_agedpartnercurrencybalance"
-                    file="report_agedpartnercurrencybalance"
+                    name="currency_aged_balance.report_agedpartnercurrencybalance"
+                    file="currency_aged_balance.report_agedpartnercurrencybalance"
                 />
         </data>
 </odoo>

@@ -11,7 +11,8 @@
     'depends': ['account'],
     'data': [
         'views/report_agedpartnercurrencybalance.xml',
-        'wizard/currency_balance_view.xml',
+        'views/account_report.xml',
+        'wizard/currency_aged_balance_view.xml',
     ],
     'demo': [],
     'qweb': [],

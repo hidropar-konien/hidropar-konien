@@ -2,9 +2,6 @@
 # Copyright 2021 Konien Ltd.Şti.
 
 import time
-
-from docutils.nodes import contact
-
 from odoo import api, models, _
 from odoo.exceptions import UserError
 from odoo.tools import float_is_zero
@@ -14,21 +11,22 @@ from dateutil.relativedelta import relativedelta
 
 class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
-    _name = 'report.currency_balance.report_agedpartnercurrencybalance'
+    _name = 'report.currency_aged_balance.report_agedpartnercurrencybalance'
 
     def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id, direction_selection, res_partner):
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
         for i in range(5)[::-1]:
-            if direction_selection == 'past':
+            if direction_selection == 'Past':
                 stop = start - relativedelta(days=period_length)
                 periods[str(i)] = {
-                    'name': (i != 0 and (str((5-(i+1)) * period_length) + '-' + str((5-i) * period_length)) or ('+'+str(4 * period_length))),
+                    'name': (i != 0 and (str((5 - (i + 1)) * period_length) + '-' + str((5 - i) * period_length)) or (
+                                '+' + str(4 * period_length))),
                     'stop': start.strftime('%Y-%m-%d'),
                     'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
                 }
                 start = stop - relativedelta(days=1)
-            elif direction_selection == 'future':
+            elif direction_selection == 'Future':
                 stop = start + relativedelta(days=period_length)
                 periods[str(i)] = {
                     'name': (i != 0 and (str((5-(i+1)) * period_length) + '-' + str((5-i) * period_length)) or ('+'+str(4 * period_length))),
@@ -124,7 +122,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 })
         history = []
 
-        if direction_selection == 'past':
+        if direction_selection == 'Past':
             for i in range(5):
                 args_list = (tuple(move_state), tuple(account_type), tuple(partner_ids),)
                 dates_query = '(COALESCE(l.date_maturity,l.date)'
@@ -227,7 +225,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                     res.append(values)
             return res, total, lines, currency, res_partner
 
-        elif direction_selection == 'future':
+        elif direction_selection == 'Future':
             for i in range(5):
                 args_list = (tuple(move_state), tuple(account_type), tuple(partner_ids),)
                 dates_query = '(COALESCE(ai.date_due,l.date)'
@@ -345,7 +343,7 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
                 if at_least_one_amount or (
                         self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                     res.append(values)
-            return res, total, lines, currency, res_partner
+            return res, total, lines, currency_id, res_partner
 
     @api.model
     def get_report_values(self, docids, data=None):
@@ -364,8 +362,11 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             account_type = ['payable']
         else:
             account_type = ['payable', 'receivable']
+        # currency_id = data['form']['currency_id']
+        # partner_id = data['form']['partner_id']
+        direction_selection = data['form']['direction_selection']
 
-        movelines, total, dummy, currency_id, partner = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form']['currency_id'], data['form']['direction_selection'], data['form']['partner'])
+        movelines, total, dummy, currency_id, partner_id = self._get_partner_move_lines(account_type, date_from, target_move, data['form']['period_length'], data['form']['currency_id'],direction_selection, data['form']['partner_id'])
 
         return {
             'doc_ids': self.ids,
@@ -376,6 +377,6 @@ class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
             'get_partner_lines': movelines,
             'get_direction': total,
             'currency': currency_id,
-            'partner': partner,
-            'direction_selection': data['form'].get('direction_selection')
+            'partner': partner_id,
+            'direction_selection': direction_selection
         }

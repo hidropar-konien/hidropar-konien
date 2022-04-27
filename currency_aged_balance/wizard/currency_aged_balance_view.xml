@@ -2,7 +2,7 @@
 <odoo>
     <record id="account_aged_currency_balance_view" model="ir.ui.view">
         <field name="name">Aged Partner Currency Balance</field>
-        <field name="model">currency.aged.balance</field>
+        <field name="model">account.aged.trial.balance</field>
         <field name="arch" type="xml">
             <form string="Report Options">
                 <separator string="Aged Partner Currency Balance"/>
@@ -27,7 +27,7 @@
     </record>
     <record id="action_account_aged_currency_balance_view" model="ir.actions.act_window">
         <field name="name">Aged Partner Currency Balance</field>
-        <field name="res_model">currency.aged.balance</field>
+        <field name="res_model">account.aged.trial.balance</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>

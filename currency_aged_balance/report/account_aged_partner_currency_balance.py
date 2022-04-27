@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 class ReportAgedPartnerCurrencyBalance(models.AbstractModel):
 
     _name = 'report.currency_aged_balance.report_agedpartnercurrencybalance'
+    # _inherit = 'report.account.report_agedpartnerbalance'
 
     def _get_partner_move_lines(self, account_type, date_from, target_move, period_length, currency_id, direction_selection, res_partner):
         periods = {}

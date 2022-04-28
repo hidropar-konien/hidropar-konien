@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <report
+            id="action_report_aged_partner_balance"
+            model="res.partner"
+            string="Aged Partner Currency Balance"
+            menu="False"
+            report_type="qweb-html"
+            name="account.report_agedpartnerbalance"
+            file="account.report_agedpartnerbalance"
+        />
+</odoo>

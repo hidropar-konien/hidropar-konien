@@ -47,8 +47,8 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         cr = self.env.cr
         user_company = self.env.user.company_id
         # user_currency = user_company.currency_id
-        # user_currency = self.env['res.currency'].browse(currency_id[0])
-        # res_currency = self.env['res.currency'].with_context(date=date_from)
+        user_currency = self.env['res.currency'].browse(currency_id[0])
+        res_currency = self.env['res.currency'].with_context(date=date_from)
         company_ids = self._context.get('company_ids') or [user_company.id]
         move_state = ['draft', 'posted']
         if target_move == 'posted':
@@ -113,14 +113,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         aml_ids = cr.fetchall()
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
         for line in self.env['account.move.line'].browse(aml_ids):
-
-            a = line.partner_id.customer_currency_rate_type_id
-
-            res_currency = self.env['res.currency'].with_context({'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                            'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id, 'date': line.date})
-            user_currency = self.env['res.currency'].with_context({'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-        'currency_rate_type_to':line.partner_id.customer_currency_rate_type_id, 'date': line.date})
-
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
                 undue_amounts[partner_id] = 0.0
@@ -172,14 +164,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             aml_ids = cr.fetchall()
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
             for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
-
-                res_currency = self.env['res.currency'].with_context(
-                    {'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id, 'date': line.date})
-                user_currency = self.env['res.currency'].with_context(
-                    {'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id, 'date': line.date})
-
                 partner_id = line.partner_id.id or False
                 if partner_id not in partners_amount:
                     partners_amount[partner_id] = 0.0

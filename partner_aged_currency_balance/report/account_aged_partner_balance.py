@@ -114,8 +114,10 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
         for line in self.env['account.move.line'].browse(aml_ids):
 
-            res_currency = self.env['res.currency'].with_context(id=currency_id[0], date=line.date)
-            user_currency = self.env['res.currency'].with_context(id=currency_id[0], date=line.date)
+            res_currency = self.env['res.currency'].with_context({'currency_rate_type_from': partner_id.customer_currency_rate_type_id,
+                            'currency_rate_type_to': partner_id.customer_currency_rate_type_id})
+            user_currency = self.env['res.currency'].with_context({'currency_rate_type_from': partner_id.customer_currency_rate_type_id,
+        'currency_rate_type_to':partner_id.customer_currency_rate_type_id})
 
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
@@ -169,8 +171,8 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
             for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
 
-                res_currency = self.env['res.currency'].with_context(id=currency_id[0], date=line.date)
-                user_currency = self.env['res.currency'].with_context(id=currency_id[0], date=line.date)
+                res_currency = self.env['res.currency'].with_context({'date': line.date, 'id': currency_id[0]})
+                user_currency = self.env['res.currency'].with_context({'date': line.date, 'id': currency_id[0]})
 
                 partner_id = line.partner_id.id or False
                 if partner_id not in partners_amount:

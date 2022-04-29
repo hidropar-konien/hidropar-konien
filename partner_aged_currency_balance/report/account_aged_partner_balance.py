@@ -16,9 +16,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
 
     def _get_partner_currency_move_lines(self, account_type, date_from, target_move, currency_id, period_length,
                                        direction_selection='Past', partner_id=False):
-
-        # cr = self.env['res.currency'].with_context({'currency_rate_type_from': partner_id.customer_currency_rate_type_id,
-        #                                            'currency_rate_type_to': partner_id.customer_currency_rate_type_id})
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
         if direction_selection == 'Past':
@@ -116,19 +113,28 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         aml_ids = cr.fetchall()
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
         for line in self.env['account.move.line'].browse(aml_ids):
+
+            cur = self.env['res.currency'].with_context(
+                {
+                    #'currency_rate_type_from': partner_id.customer_currency_rate_type_id,
+                 #'currency_rate_type_to': partner_id.customer_currency_rate_type_id,
+                 'date': line.date})
+
+
+
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
                 undue_amounts[partner_id] = 0.0
-            line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
+            line_amount = cur._compute(line.company_id.currency_id, user_currency, line.balance)
             if user_currency.is_zero(line_amount):
                 continue
             for partial_line in line.matched_debit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                    line_amount += cur._compute(partial_line.company_id.currency_id, user_currency,
                                                         partial_line.amount)
             for partial_line in line.matched_credit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                    line_amount -= cur._compute(partial_line.company_id.currency_id, user_currency,
                                                         partial_line.amount)
             if not self.env.user.company_id.currency_id.is_zero(line_amount):
                 undue_amounts[partner_id] += line_amount
@@ -167,19 +173,26 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             aml_ids = cr.fetchall()
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
             for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
+
+                cur = self.env['res.currency'].with_context(
+                    {
+                        #'currency_rate_type_from': partner_id.customer_currency_rate_type_id,
+                     #'currency_rate_type_to': partner_id.customer_currency_rate_type_id,
+                     'date': line.date})
+
                 partner_id = line.partner_id.id or False
                 if partner_id not in partners_amount:
                     partners_amount[partner_id] = 0.0
-                line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
+                line_amount = cur._compute(line.company_id.currency_id, user_currency, line.balance)
                 if user_currency.is_zero(line_amount):
                     continue
                 for partial_line in line.matched_debit_ids:
                     if partial_line.max_date <= date_from:
-                        line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                        line_amount += cur._compute(partial_line.company_id.currency_id, user_currency,
                                                             partial_line.amount)
                 for partial_line in line.matched_credit_ids:
                     if partial_line.max_date <= date_from:
-                        line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                        line_amount -= cur._compute(partial_line.company_id.currency_id, user_currency,
                                                             partial_line.amount)
 
                 if not self.env.user.company_id.currency_id.is_zero(line_amount):

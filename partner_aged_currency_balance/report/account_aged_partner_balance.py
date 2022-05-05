@@ -134,7 +134,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 if partial_line.max_date <= date_from:
                     # line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
                     #                                     partial_line.amount)
-                    line_amount = self.env['res.currency'].with_context(
+                    line_amount += self.env['res.currency'].with_context(
                         {
                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -145,7 +145,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 if partial_line.max_date <= date_from:
                     # line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
                     #                                     partial_line.amount)
-                    line_amount = self.env['res.currency'].with_context(
+                    line_amount -= self.env['res.currency'].with_context(
                         {
                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -205,7 +205,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     if partial_line.max_date <= date_from:
                         # line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
                         #                                     partial_line.amount)
-                        line_amount = self.env['res.currency'].with_context(
+                        line_amount += self.env['res.currency'].with_context(
                             {
                                 'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                 'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -215,7 +215,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     if partial_line.max_date <= date_from:
                         # line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
                         #                                     partial_line.amount)
-                        line_amount = self.env['res.currency'].with_context(
+                        line_amount -= self.env['res.currency'].with_context(
                             {
                                 'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                 'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,

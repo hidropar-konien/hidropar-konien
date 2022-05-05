@@ -17,5 +17,11 @@
                 </p>
             </div>
         </xpath>
+
+        <xpath expr="//table/tbody/tr/td[2]" position="replace">
+            <td class="text-right">
+                                <span t-esc="partner['direction']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                            </td>
+        </xpath>
     </template>
 </odoo>

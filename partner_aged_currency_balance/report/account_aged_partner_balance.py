@@ -304,4 +304,5 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             'time': time,
             'get_partner_lines': movelines,
             'get_direction': total,
+            'currency': currency_id,
         }

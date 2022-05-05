@@ -293,6 +293,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         period_length = data['form']['period_length']
         direction_selection = data['form']['direction_selection']
         partner_id = data['form']['partner_id']
+        currency = self.env['res.currency'].search([('id', '=', currency_id[0])])[0]
         movelines, total, dummy = self._get_partner_currency_move_lines(account_type, date_from, target_move,
                                                                         currency_id, period_length, direction_selection,
                                                                         partner_id)
@@ -304,5 +305,5 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             'time': time,
             'get_partner_lines': movelines,
             'get_direction': total,
-            'currency': currency_id,
+            'currency': currency,
         }

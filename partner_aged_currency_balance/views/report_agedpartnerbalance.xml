@@ -18,55 +18,46 @@
             </div>
         </xpath>
 
-<!--        <xpath expr="//table/tbody/tr/td[2]" position="replace">-->
-<!--            <td class="text-right">-->
-<!--                <span t-esc="partner['direction']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>-->
-<!--             </td>-->
-<!--        </xpath>-->
 
-<!--        <xpath expr="//table/tbody/tr/td[3]" position="replace">-->
-<!--            <td class="text-right">-->
-<!--               <span t-esc="partner['4']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>-->
-<!--             </td>-->
-<!--        </xpath>-->
-<!--        <xpath expr="//table/tbody/tr/td[4]" position="replace">-->
-<!--            <td class="text-right">-->
-<!--                <span t-esc="partner['3']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>-->
-<!--             </td>-->
-<!--        </xpath>-->
-<!--        <xpath expr="//table/tbody/tr/td[5]" position="replace">-->
-<!--            <td class="text-right">-->
-<!--                <span t-esc="partner['2']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>-->
-<!--             </td>-->
-<!--        </xpath>-->
-<!--        <xpath expr="//table/tbody/tr/td[6]" position="replace">-->
-<!--            <td class="text-right">-->
-<!--                <span t-esc="partner['1']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>-->
-<!--             </td>-->
-<!--        </xpath>-->
-<!--        <xpath expr="//table/tbody/tr/td[7]" position="replace">-->
-<!--            <td class="text-right">-->
-<!--                <span t-esc="partner['0']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>-->
-<!--             </td>-->
-<!--        </xpath>-->
-<!--        <xpath expr="//table/tbody/tr/td[8]" position="replace">-->
-<!--             <td class="text-right" t-if="direction_selection== 'past'">-->
-<!--                                <span t-esc="partner['total']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>-->
-<!--                            </td>-->
-<!--        </xpath>-->
+        <xpath expr="//table/thead/tr[2]" position="replace">
+            <th>Account Total</th>
+            <th class="text-right"><span t-esc="get_direction[6]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+            <th class="text-right"><span t-esc="get_direction[4]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+            <th class="text-right"><span t-esc="get_direction[3]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+            <th class="text-right"><span t-esc="get_direction[2]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+            <th class="text-right"><span t-esc="get_direction[1]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+            <th class="text-right"><span t-esc="get_direction[0]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+            <th class="text-right" t-if="direction_selection== 'past'"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+        </xpath>
 
-
-<!--        <xpath expr="//table/thead/tr[2]" position="replace">-->
-<!--            <th>Account Total</th>-->
-<!--                            <th class="text-right"><span t-esc="get_direction[6]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
-<!--                            <th class="text-right"><span t-esc="get_direction[4]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
-<!--                            <th class="text-right"><span t-esc="get_direction[3]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
-<!--                            <th class="text-right"><span t-esc="get_direction[2]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
-<!--                            <th class="text-right"><span t-esc="get_direction[1]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
-<!--                            <th class="text-right"><span t-esc="get_direction[0]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
-<!--                            <th class="text-right" t-if="direction_selection== 'past'"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
-<!--        </xpath>-->
-
+        <xpath expr="//table/tbody" position="replace">
+            <tr t-foreach="get_partner_lines" t-as="partner">
+                <td>
+                    <span t-esc="partner['name']"/>
+                </td>
+                <td class="text-right">
+                    <span t-esc="partner['direction']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                </td>
+                <td class="text-right">
+                    <span t-esc="partner['4']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                </td>
+                <td class="text-right">
+                    <span t-esc="partner['3']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                </td>
+                <td class="text-right">
+                    <span t-esc="partner['2']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                </td>
+                <td class="text-right">
+                    <span t-esc="partner['1']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                </td>
+                <td class="text-right">
+                    <span t-esc="partner['0']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                </td>
+                <td class="text-right" t-if="direction_selection== 'past'">
+                    <span t-esc="partner['total']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                </td>
+            </tr>
+        </xpath>
 
     </template>
 </odoo>

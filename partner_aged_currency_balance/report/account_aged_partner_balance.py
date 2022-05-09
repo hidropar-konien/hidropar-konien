@@ -47,7 +47,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         cr = self.env.cr
         user_company = self.env.user.company_id
         user_currency = user_company.currency_id
-        # select_currency = self.env['res.currency'].browse(currency_id[0])
+        select_currency = self.env['res.currency'].browse(currency_id[0])
         res_currency = self.env['res.currency'].with_context(date=date_from)
 
         company_ids = self._context.get('company_ids') or [user_company.id]
@@ -117,36 +117,33 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
                 undue_amounts[partner_id] = 0.0
-            line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
-            # line_amount = self.env['res.currency'].with_context(
-            #     {
-            #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-            #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-            #         'date': line.date
-            #     })._compute(line.company_id.currency_id, select_currency, line.balance)
+            # line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
+            line_amount = self.env['res.currency'].with_context(
+                {
+                    'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                    'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
+                })._compute(line.company_id.currency_id, select_currency, line.balance)
             if user_currency.is_zero(line_amount):
                 continue
             for partial_line in line.matched_debit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
-                                                        partial_line.amount)
-                    # line_amount += self.env['res.currency'].with_context(
-                    #     {
-                    #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                    #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                    #         'date': line.date
-                    #     })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
+                    # line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                    #                                     partial_line.amount)
+                    line_amount += self.env['res.currency'].with_context(
+                        {
+                            'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                            'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id
+                        })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
 
             for partial_line in line.matched_credit_ids:
                 if partial_line.max_date <= date_from:
-                    line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
-                                                        partial_line.amount)
-                    # line_amount -= self.env['res.currency'].with_context(
-                    #     {
-                    #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                    #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                    #         'date': line.date
-                    #     })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
+                    # line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                    #                                     partial_line.amount)
+                    line_amount -= self.env['res.currency'].with_context(
+                        {
+                            'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                            'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id
+                        })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
 
             if not self.env.user.company_id.currency_id.is_zero(line_amount):
                 undue_amounts[partner_id] += line_amount
@@ -188,35 +185,32 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 partner_id = line.partner_id.id or False
                 if partner_id not in partners_amount:
                     partners_amount[partner_id] = 0.0
-                line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
-                # line_amount = self.env['res.currency'].with_context(
-                #     {
-                #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                #         'date': line.date
-                #     })._compute(line.company_id.currency_id, select_currency, line.balance)
+                # line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
+                line_amount = self.env['res.currency'].with_context(
+                    {
+                        'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                        'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id
+                    })._compute(line.company_id.currency_id, select_currency, line.balance)
                 if user_currency.is_zero(line_amount):
                     continue
                 for partial_line in line.matched_debit_ids:
                     if partial_line.max_date <= date_from:
-                        line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
-                                                            partial_line.amount)
-                        # line_amount += self.env['res.currency'].with_context(
-                        #     {
-                        #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                        #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                        #         'date': line.date
-                        #     })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
+                        # line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                        #                                     partial_line.amount)
+                        line_amount += self.env['res.currency'].with_context(
+                            {
+                                'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                                'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id
+                            })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
                 for partial_line in line.matched_credit_ids:
                     if partial_line.max_date <= date_from:
-                        line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
-                                                            partial_line.amount)
-                        # line_amount -= self.env['res.currency'].with_context(
-                        #     {
-                        #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                        #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                        #         'date': line.date
-                        #     })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
+                        # line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
+                        #                                     partial_line.amount)
+                        line_amount -= self.env['res.currency'].with_context(
+                            {
+                                'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                                'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id
+                            })._compute(line.company_id.currency_id, select_currency, partial_line.amount)
 
                 if not self.env.user.company_id.currency_id.is_zero(line_amount):
                     partners_amount[partner_id] += line_amount
@@ -293,8 +287,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         movelines, total, dummy = self._get_partner_currency_move_lines(account_type, date_from, target_move,
                                                                         currency_id, period_length, direction_selection,
                                                                         partner_id)
-        for i in movelines:
-            curr = i['name']
+
         return {
             'doc_ids': self.ids,
             'doc_model': model,

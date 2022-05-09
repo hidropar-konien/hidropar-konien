@@ -293,6 +293,8 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         movelines, total, dummy = self._get_partner_currency_move_lines(account_type, date_from, target_move,
                                                                         currency_id, period_length, direction_selection,
                                                                         partner_id)
+        for i in movelines:
+            curr = i['name']
         return {
             'doc_ids': self.ids,
             'doc_model': model,
@@ -302,5 +304,4 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             'get_partner_lines': movelines,
             'get_direction': total,
             'currency': currency,
-            'partner': partner_id
         }

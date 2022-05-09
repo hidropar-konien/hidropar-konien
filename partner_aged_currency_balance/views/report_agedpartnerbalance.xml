@@ -18,13 +18,13 @@
             </div>
         </xpath>
 
-        <xpath expr="//table/thead/tr[1]/th[1]" position="after">
-            <th>Currency</th>
-        </xpath>
+<!--        <xpath expr="//table/thead/tr[1]/th[1]" position="after">-->
+<!--            <th>Currency</th>-->
+<!--        </xpath>-->
 
         <xpath expr="//table/thead/tr[2]" position="replace">
             <th>Account Total</th>
-            <th></th>
+<!--            <th></th>-->
             <th class="text-right"><span t-esc="get_direction[6]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
             <th class="text-right"><span t-esc="get_direction[4]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
             <th class="text-right"><span t-esc="get_direction[3]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
@@ -36,9 +36,9 @@
 
         <xpath expr="//table/tbody/tr[1]" position="replace">
             <tr t-foreach="get_partner_lines" t-as="partner">
-                <td>
-                    <span t-esc="partner['currency_id']"/>
-                </td>
+<!--                <td>-->
+<!--                    <span t-esc="partner['currency_id']"/>-->
+<!--                </td>-->
                 <td>
                     <span t-esc="partner['name']"/>
                 </td>

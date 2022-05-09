@@ -18,20 +18,27 @@
             </div>
         </xpath>
 
+        <xpath expr="//table/thead/tr[1]/th[1]" position="after">
+            <th>Currency</th>
+        </xpath>
 
         <xpath expr="//table/thead/tr[2]" position="replace">
             <th>Account Total</th>
+            <th></th>
             <th class="text-right"><span t-esc="get_direction[6]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
             <th class="text-right"><span t-esc="get_direction[4]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
             <th class="text-right"><span t-esc="get_direction[3]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
             <th class="text-right"><span t-esc="get_direction[2]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
             <th class="text-right"><span t-esc="get_direction[1]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
             <th class="text-right"><span t-esc="get_direction[0]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-            <th class="text-right" t-if="direction_selection== 'past'"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
+            <th class="text-right"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
         </xpath>
 
-        <xpath expr="//table/tbody" position="replace">
+        <xpath expr="//table/tbody/tr[1]" position="replace">
             <tr t-foreach="get_partner_lines" t-as="partner">
+                <td>
+                    <span t-esc="partner['currency_id']"/>
+                </td>
                 <td>
                     <span t-esc="partner['name']"/>
                 </td>
@@ -53,7 +60,7 @@
                 <td class="text-right">
                     <span t-esc="partner['0']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
                 </td>
-                <td class="text-right" t-if="direction_selection== 'past'">
+                <td class="text-right">
                     <span t-esc="partner['total']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
                 </td>
             </tr>

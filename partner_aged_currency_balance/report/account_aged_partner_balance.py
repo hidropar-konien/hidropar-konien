@@ -119,7 +119,12 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 undue_amounts[partner_id] = 0.0
             # line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
             if select_currency == line.currency_id:
-                line_amount = line.amount_residual_currency
+                line_amount = self.env['res.currency'].with_context(
+                    {
+                        'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                        'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
+                        'date': line.date,
+                    })._compute(line.company_id.currency_id, select_currency, line.balance)
             else:
                 line_amount = self.env['res.currency'].with_context(
                     {
@@ -197,7 +202,12 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     partners_amount[partner_id] = 0.0
                 # line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
                 if line.currency_id == select_currency:
-                    line_amount = line.amount_residual_currency
+                    line_amount = self.env['res.currency'].with_context(
+                        {
+                            'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                            'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
+                            'date': line.date
+                        })._compute(line.company_id.currency_id, select_currency, line.balance)
                 else:
                     line_amount = self.env['res.currency'].with_context(
                         {
@@ -306,7 +316,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         movelines, total, dummy = self._get_partner_currency_move_lines(account_type, date_from, target_move,
                                                                         currency_id, period_length, direction_selection,
                                                                         partner_id)
-
 
         return {
             'doc_ids': self.ids,

@@ -37,7 +37,7 @@
         <xpath expr="//table/tbody/tr[1]" position="replace">
             <tr t-foreach="get_partner_lines" t-as="partner">
                 <td>
-                    <span t-if="partner['currency']" t-esc="partner['currency']"/>
+                    <span t-esc="partner['currency']"/>
                 </td>
                 <td>
                     <span t-esc="partner['name']"/>

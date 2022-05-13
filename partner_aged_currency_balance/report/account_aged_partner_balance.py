@@ -281,9 +281,11 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 values['name'] = browsed_partner.name and len(browsed_partner.name) >= 45 and browsed_partner.name[
                                                                                   0:40] + '...' or browsed_partner.name
                 values['trust'] = browsed_partner.trust
+                partner['currency'] = browsed_partner.currency_id
             else:
                 values['name'] = _('Unknown Partner')
                 values['trust'] = False
+                partner['currency'] = None
 
             if at_least_one_amount or (self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                 res.append(values)

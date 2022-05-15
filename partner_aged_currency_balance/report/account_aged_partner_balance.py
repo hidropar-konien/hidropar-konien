@@ -123,7 +123,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     {
                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                        'date': line.date,
+                        # 'date': line.date,
                     })._compute(line.company_id.currency_id, select_currency, line.balance)
             else:
                 line_amount = self.env['res.currency'].with_context(
@@ -206,7 +206,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         {
                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                            'date': line.date
+                            # 'date': line.date
                         })._compute(line.company_id.currency_id, select_currency, line.balance)
                 else:
                     line_amount = self.env['res.currency'].with_context(
@@ -285,7 +285,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             else:
                 values['name'] = _('Unknown Partner')
                 values['trust'] = False
-                partner.update({'currency': 'Tanımsız'})
+                partner.update({'currency': _('Tanımsız')})
 
             if at_least_one_amount or (self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                 res.append(values)

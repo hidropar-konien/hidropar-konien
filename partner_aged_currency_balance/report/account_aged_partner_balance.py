@@ -140,7 +140,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     #                                     partial_line.amount)
 
                     if partial_line.currency_id == select_currency:
-                        line_amount += partial_line.amount_currency
+                        line_amount += partial_line.amount_residual_currency
                     else:
                         line_amount += self.env['res.currency'].with_context(
                             {
@@ -154,7 +154,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     # line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
                     #                                     partial_line.amount)
                     if partial_line.currency_id == select_currency:
-                        line_amount -= partial_line.amount_currency
+                        line_amount -= partial_line.amount_residual_currency
                     else:
                         line_amount -= self.env['res.currency'].with_context(
                             {
@@ -225,7 +225,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         # line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
                         #                                     partial_line.amount)
                         if line.currency_id == select_currency:
-                            line_amount += partial_line.amount_currency
+                            line_amount += partial_line.amount_residual_currency
                         else:
                             line_amount += self.env['res.currency'].with_context(
                                 {
@@ -238,7 +238,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         # line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
                         #                                     partial_line.amount)
                         if line.currency_id == select_currency:
-                            line_amount -= partial_line.amount_currency
+                            line_amount -= partial_line.amount_residual_currency
                         else:
                             line_amount -= self.env['res.currency'].with_context(
                                 {

@@ -37,10 +37,10 @@
         <xpath expr="//table/tbody/tr[1]" position="replace">
             <tr t-foreach="get_partner_lines" t-as="partner">
                 <td>
-                    <span t-esc="partner['currency']"/>
+                    <span t-esc="partner['name']"/>
                 </td>
                 <td>
-                    <span t-esc="partner['name']"/>
+                    <span t-esc="partner['currency']"/>
                 </td>
                 <td class="text-right">
                     <span t-esc="partner['direction']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>

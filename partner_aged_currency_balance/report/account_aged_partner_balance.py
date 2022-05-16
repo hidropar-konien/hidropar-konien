@@ -119,12 +119,13 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 undue_amounts[partner_id] = 0.0
             # line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
             if select_currency == line.currency_id:
-                line_amount = self.env['res.currency'].with_context(
-                    {
-                        'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                        'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                        # 'date': line.date,
-                    })._compute(line.company_id.currency_id, select_currency, line.balance)
+                line_amount = line.balance_cash_basis
+                # line_amount = self.env['res.currency'].with_context(
+                #     {
+                #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
+                #         # 'date': line.date,
+                #     })._compute(line.company_id.currency_id, select_currency, line.balance)
             else:
                 line_amount = self.env['res.currency'].with_context(
                     {
@@ -202,12 +203,13 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     partners_amount[partner_id] = 0.0
                 # line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
                 if line.currency_id == select_currency:
-                    line_amount = self.env['res.currency'].with_context(
-                        {
-                            'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
-                            'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
-                            # 'date': line.date
-                        })._compute(line.company_id.currency_id, select_currency, line.balance)
+                    line_amount = line.balance_cash_basis
+                    # line_amount = self.env['res.currency'].with_context(
+                    #     {
+                    #         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
+                    #         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
+                    #         # 'date': line.date
+                    #     })._compute(line.company_id.currency_id, select_currency, line.balance)
                 else:
                     line_amount = self.env['res.currency'].with_context(
                         {
@@ -281,11 +283,11 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 values['name'] = browsed_partner.name and len(browsed_partner.name) >= 45 and browsed_partner.name[
                                                                                   0:40] + '...' or browsed_partner.name
                 values['trust'] = browsed_partner.trust
-                partner.update({'currency': browsed_partner.currency_id.name})
+                values['currency'] = browsed_partner.currency_id.name
             else:
                 values['name'] = _('Unknown Partner')
                 values['trust'] = False
-                partner.update({'currency': _('Tanımsız')})
+                values['currency'] = _('Tanımsız')
 
             if at_least_one_amount or (self._context.get('include_nullified_amount') and lines[partner['partner_id']]):
                 res.append(values)

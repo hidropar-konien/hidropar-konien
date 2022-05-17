@@ -17,23 +17,27 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                        direction_selection='past', partner_id=False):
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
-        for i in range(5)[::-1]:
-            if direction_selection == 'past':
+        if direction_selection == 'past':
+            for i in range(5)[::-1]:
                 stop = start - relativedelta(days=period_length)
+                period_name = str((5 - (i + 1)) * period_length + 1) + '-' + str((5 - i) * period_length)
+                period_stop = (start - relativedelta(days=1)).strftime('%Y-%m-%d')
+                if i == 0:
+                    period_name = '+' + str(4 * period_length)
                 periods[str(i)] = {
-                    'name': (i != 0 and (str((5 - (i + 1)) * period_length) + '-' + str((5 - i) * period_length)) or (
-                                '+' + str(4 * period_length))),
-                    'stop': start.strftime('%Y-%m-%d'),
+                    'name': period_name,
+                    'stop': period_stop,
                     'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
                 }
-                start = stop - relativedelta(days=1)
-            elif direction_selection == 'future':
+                start = stop
+        else:
+            for i in range(5):
                 stop = start + relativedelta(days=period_length)
-                periods[str(i)] = {
-                    'name': (i != 0 and (str((5 - (i + 1)) * period_length) + '-' + str((5 - i) * period_length)) or (
-                                '+' + str(4 * period_length))),
-                    'stop': start.strftime('%Y-%m-%d'),
-                    'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
+                periods[str(5 - (i + 1))] = {
+                    'name': (i != 4 and str((i) * period_length) + '-' + str((i + 1) * period_length) or (
+                            '+' + str(4 * period_length))),
+                    'start': start.strftime('%Y-%m-%d'),
+                    'stop': (i != 4 and stop.strftime('%Y-%m-%d') or False),
                 }
                 start = stop + relativedelta(days=1)
 

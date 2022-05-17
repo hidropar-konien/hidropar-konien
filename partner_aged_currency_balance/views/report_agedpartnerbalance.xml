@@ -18,21 +18,37 @@
             </div>
         </xpath>
 
-        <xpath expr="//table/thead/tr[1]/th[1]" position="after">
+        <xpath expr="//table/thead/tr[1]" position="replace">
             <th>Partner Currency</th>
+            <th>Partners</th>
+            <th class="text-right">
+                <span>Not due</span>
+            </th>
+            <th class="text-right"><span t-esc="data['4']['start']"/> - <span t-esc="data['4']['stop']"/></th>
+            <th class="text-right"><span t-esc="data['3']['start']"/> - <span t-esc="data['3']['stop']"/></th>
+            <th class="text-right"><span t-esc="data['2']['start']"/> - <span t-esc="data['2']['stop']"/></th>
+            <th class="text-right"><span t-esc="data['1']['start']"/> - <span t-esc="data['1']['stop']"/></th>
+            <th class="text-right"><span t-esc="data['0']['start']"/> - <span t-esc="data['0']['stop']"/></th>
+            <th class="text-right">Total</th>
         </xpath>
 
-        <xpath expr="//table/thead/tr[2]" position="replace">
-            <th>Account Total</th>
-            <th>-</th>
-            <th class="text-right"><span t-esc="get_direction[6]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-            <th class="text-right"><span t-esc="get_direction[4]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-            <th class="text-right"><span t-esc="get_direction[3]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-            <th class="text-right"><span t-esc="get_direction[2]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-            <th class="text-right"><span t-esc="get_direction[1]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-            <th class="text-right"><span t-esc="get_direction[0]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-            <th class="text-right"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>
-        </xpath>
+
+<!--        <xpath expr="//table/thead/tr[1]/th[1]" position="after">-->
+<!--            <th>Partner Currency</th>-->
+<!--        </xpath>-->
+
+
+<!--        <xpath expr="//table/thead/tr[2]" position="replace">-->
+<!--            <th>Account Total</th>-->
+<!--            <th>-</th>-->
+<!--            <th class="text-right"><span t-esc="get_direction[6]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
+<!--            <th class="text-right"><span t-esc="get_direction[4]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
+<!--            <th class="text-right"><span t-esc="get_direction[3]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
+<!--            <th class="text-right"><span t-esc="get_direction[2]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
+<!--            <th class="text-right"><span t-esc="get_direction[1]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
+<!--            <th class="text-right"><span t-esc="get_direction[0]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
+<!--            <th class="text-right"><span t-esc="get_direction[5]" t-options="{'widget': 'monetary', 'display_currency': currency}"/></th>-->
+<!--        </xpath>-->
 
         <xpath expr="//table/tbody/tr[1]" position="replace">
             <tr t-foreach="get_partner_lines" t-as="partner">

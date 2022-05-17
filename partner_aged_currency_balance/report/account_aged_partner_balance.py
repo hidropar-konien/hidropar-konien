@@ -48,7 +48,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         user_currency = user_company.currency_id
         select_currency = self.env['res.currency'].browse(currency_id[0])
         res_currency = self.env['res.currency'].with_context(date=date_from)
-
         company_ids = self._context.get('company_ids') or [user_company.id]
         move_state = ['draft', 'posted']
         if target_move == 'posted':
@@ -433,8 +432,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             values['partner_id'] = partner['partner_id']
             if partner['partner_id']:
                 browsed_partner = self.env['res.partner'].browse(partner['partner_id'])
-                values['name'] = browsed_partner.name and len(browsed_partner.name) >= 45 and browsed_partner.name[
-                                                                                  0:40] + '...' or browsed_partner.name
+                values['name'] = browsed_partner.name and len(browsed_partner.name) >= 45 and browsed_partner.name[0:40] + '...' or browsed_partner.name
                 values['trust'] = browsed_partner.trust
                 values['currency'] = browsed_partner.customer_currency_id.name
             else:

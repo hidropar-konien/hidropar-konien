@@ -54,9 +54,10 @@ class AccountAgedTrialBalance(models.TransientModel):
             for i in range(5):
                 stop = start + relativedelta(days=period_length)
                 res[str(5-(i+1))] = {
-                    'name': (i!=4 and str((i) * period_length)+'-' + str((i+1) * period_length) or ('+'+str(4 * period_length))),
+                    'name': (i != 4 and str((i) * period_length) + '-' + str((i + 1) * period_length) or (
+                                '+' + str(4 * period_length))),
                     'start': start.strftime('%Y-%m-%d'),
-                    'stop': (i!=4 and stop.strftime('%Y-%m-%d') or False),
+                    'stop': (i != 4 and stop.strftime('%Y-%m-%d') or False),
                 }
                 start = stop + relativedelta(days=1)
 

@@ -112,28 +112,26 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             tuple(move_state), tuple(account_type), date_from, tuple(partner_ids), date_from, tuple(company_ids)))
         aml_ids = cr.fetchall()
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
-        line_amount_0 = 0
         for line in self.env['account.move.line'].browse(aml_ids):
             partner_id = line.partner_id.id or False
             if partner_id not in undue_amounts:
                 undue_amounts[partner_id] = 0.0
             # line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
-
             if select_currency == user_currency:  # Rapor ve Şirket para birimi TL ise:
-                line_amount_0 += res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
+                line_amount_1 = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
             else:
                 if select_currency == line.currency_id: # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                    line_amount_0 += line.amount_currency
+                    line_amount_2 = line.amount_currency
                 else:  # değil ise
                     if line.currency_id == user_currency:  # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
-                        line_amount_0 += self.env['res.currency'].with_context(
+                        line_amount_3 = self.env['res.currency'].with_context(
                                 {
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                     'date': date_from,
                                 })._compute(line.company_id.currency_id, select_currency, line.balance)
                     elif not line.currency_id:  # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                        line_amount_0 += self.env['res.currency'].with_context(
+                        line_amount_4 = self.env['res.currency'].with_context(
                                 {
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -146,33 +144,34 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                     'date': date_from,
                                 })._compute(line.company_id.currency_id, line.currency_id, line.amount_currency)
-                        line_amount_0 += self.env['res.currency'].with_context(
+                        line_amount_5 = self.env['res.currency'].with_context(
                             {
                                 'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                 'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                 'date': date_from,
                             })._compute(line.company_id.currency_id, select_currency, user_currency_amount)
-            if user_currency.is_zero(line_amount_0):
+            if user_currency.is_zero(line_amount):
                 continue
+            line_amount = line_amount_1 + line_amount_2 + line_amount_3 + line_amount_4 + line_amount_5
             for partial_line in line.matched_debit_ids:
                 if partial_line.max_date <= date_from:
                     #  line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
                     #                                      partial_line.amount)
                     if select_currency == user_currency:  # Rapor ve Şirket para birimi TL ise:
-                        line_amount_0 += res_currency._compute(line.company_id.currency_id, user_currency, partial_line.amount)
+                        line_amount += res_currency._compute(line.company_id.currency_id, user_currency, partial_line.amount)
                     else:
                         if select_currency == partial_line.currency_id:  # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                            line_amount_0 += partial_line.amount_currency
+                            line_amount += partial_line.amount_currency
                         else:  # değil ise
                             if partial_line.currency_id == user_currency: #  hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
-                                line_amount_0 += self.env['res.currency'].with_context(
+                                line_amount += self.env['res.currency'].with_context(
                                     {
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                         'date': date_from,
                                     })._compute(partial_line.company_id.currency_id, select_currency, partial_line.amount)
                             elif not partial_line.currency_id: #  hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                                line_amount_0 += self.env['res.currency'].with_context(
+                                line_amount += self.env['res.currency'].with_context(
                                     {
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -185,7 +184,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                         'date': date_from,
                                     })._compute(partial_line.company_id.currency_id, partial_line.currency_id, partial_line.amount_currency)
-                                line_amount_0 += self.env['res.currency'].with_context(
+                                line_amount += self.env['res.currency'].with_context(
                                     {
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -197,14 +196,14 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     # line_amount -= res_currency._compute(partial_line.company_id.currency_id, user_currency,
                     #                                     partial_line.amount)
                     if select_currency == user_currency:  # Rapor ve Şirket para birimi TL ise:
-                        line_amount_0 -= res_currency._compute(line.company_id.currency_id, user_currency,
+                        line_amount -= res_currency._compute(line.company_id.currency_id, user_currency,
                                                              partial_line.amount)
                     else:
                         if select_currency == partial_line.currency_id:  # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                            line_amount_0 -= partial_line.amount_currency
+                            line_amount -= partial_line.amount_currency
                         else:  # değil ise
                             if partial_line.currency_id == user_currency:  # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
-                                line_amount_0 -= self.env['res.currency'].with_context(
+                                line_amount -= self.env['res.currency'].with_context(
                                     {
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -212,7 +211,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                     })._compute(partial_line.company_id.currency_id, select_currency,
                                                 partial_line.amount)
                             elif not partial_line.currency_id:  # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                                line_amount_0 -= self.env['res.currency'].with_context(
+                                line_amount -= self.env['res.currency'].with_context(
                                     {
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -227,7 +226,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                         'date': date_from,
                                     })._compute(partial_line.company_id.currency_id, partial_line.currency_id,
                                                 partial_line.amount_currency)
-                                line_amount_0 -= self.env['res.currency'].with_context(
+                                line_amount -= self.env['res.currency'].with_context(
                                     {
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -235,11 +234,11 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                     })._compute(partial_line.company_id.currency_id, select_currency,
                                                 user_currency_amount)
 
-            if not self.env.user.company_id.currency_id.is_zero(line_amount_0):
-                undue_amounts[partner_id] += line_amount_0
+            if not self.env.user.company_id.currency_id.is_zero(line_amount):
+                undue_amounts[partner_id] += line_amount
                 lines[partner_id].append({
                     'line': line,
-                    'amount': line_amount_0,
+                    'amount': line_amount,
                     'period': 6,
                 })
         history = []
@@ -271,27 +270,26 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             partners_amount = {}
             aml_ids = cr.fetchall()
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
-            line_amount_1 = 0
             for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
                 partner_id = line.partner_id.id or False
                 if partner_id not in partners_amount:
                     partners_amount[partner_id] = 0.0
                 #    line_amount = res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
                 if select_currency == user_currency:
-                    line_amount_1 += res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
+                    line_amount += res_currency._compute(line.company_id.currency_id, user_currency, line.balance)
                 else:
                     if select_currency == line.currency_id:
-                        line_amount_1 += line.amount_currency
+                        line_amount += line.amount_currency
                     else:
                         if line.currency_id == user_currency:
-                            line_amount_1 += self.env['res.currency'].with_context(
+                            line_amount += self.env['res.currency'].with_context(
                                 {
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                     'date': date_from,
                                 })._compute(line.company_id.currency_id, select_currency, line.balance)
                         elif not line.currency_id:
-                            line_amount_1 += self.env['res.currency'].with_context(
+                            line_amount += self.env['res.currency'].with_context(
                                 {
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -304,28 +302,28 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                     'date': date_from,
                                 })._compute(line.company_id.currency_id, line.currency_id, line.amount_currency)
-                            line_amount_1 += self.env['res.currency'].with_context(
+                            line_amount += self.env['res.currency'].with_context(
                                 {
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                     'date': date_from,
                                 })._compute(line.company_id.currency_id, select_currency, user_currency_amount)
 
-                if user_currency.is_zero(line_amount_1):
+                if user_currency.is_zero(line_amount):
                     continue
                 for partial_line in line.matched_debit_ids:
                     if partial_line.max_date <= date_from:
                         #  line_amount += res_currency._compute(partial_line.company_id.currency_id, user_currency,
                         #                                     partial_line.amount)
                         if select_currency == user_currency:  # Rapor ve Şirket para birimi TL ise:
-                            line_amount_1 += res_currency._compute(line.company_id.currency_id, user_currency,
+                            line_amount += res_currency._compute(line.company_id.currency_id, user_currency,
                                                                  partial_line.amount)
                         else:
                             if select_currency == partial_line.currency_id:  # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                                line_amount_1 += partial_line.amount_currency
+                                line_amount += partial_line.amount_currency
                             else:  # değil ise
                                 if partial_line.currency_id == user_currency:  # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
-                                    line_amount_1 += self.env['res.currency'].with_context(
+                                    line_amount += self.env['res.currency'].with_context(
                                         {
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -333,7 +331,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                         })._compute(partial_line.company_id.currency_id, select_currency,
                                                     partial_line.amount)
                                 elif not partial_line.currency_id:  # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                                    line_amount_1 += self.env['res.currency'].with_context(
+                                    line_amount += self.env['res.currency'].with_context(
                                         {
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -348,7 +346,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                             'date': date_from,
                                         })._compute(partial_line.company_id.currency_id, partial_line.currency_id,
                                                     partial_line.amount_currency)
-                                    line_amount_1 += self.env['res.currency'].with_context(
+                                    line_amount += self.env['res.currency'].with_context(
                                         {
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -362,14 +360,14 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         #                                     partial_line.amount)
 
                         if select_currency == user_currency:  # Rapor ve Şirket para birimi TL ise:
-                            line_amount_1 -= res_currency._compute(line.company_id.currency_id, user_currency,
+                            line_amount -= res_currency._compute(line.company_id.currency_id, user_currency,
                                                                  partial_line.amount)
                         else:
                             if select_currency == partial_line.currency_id:  # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                                line_amount_1 -= partial_line.amount_currency
+                                line_amount -= partial_line.amount_currency
                             else:  # değil ise
                                 if partial_line.currency_id == user_currency:  # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
-                                    line_amount_1 -= self.env['res.currency'].with_context(
+                                    line_amount -= self.env['res.currency'].with_context(
                                         {
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -377,7 +375,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                         })._compute(partial_line.company_id.currency_id, select_currency,
                                                     partial_line.amount)
                                 elif not partial_line.currency_id:  # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                                    line_amount_1 -= self.env['res.currency'].with_context(
+                                    line_amount -= self.env['res.currency'].with_context(
                                         {
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -392,7 +390,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                             'date': date_from,
                                         })._compute(partial_line.company_id.currency_id, partial_line.currency_id,
                                                     partial_line.amount_currency)
-                                    line_amount_1 -= self.env['res.currency'].with_context(
+                                    line_amount -= self.env['res.currency'].with_context(
                                         {
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
@@ -400,11 +398,11 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                         })._compute(partial_line.company_id.currency_id, select_currency,
                                                     user_currency_amount)
 
-                if not self.env.user.company_id.currency_id.is_zero(line_amount_1):
-                    partners_amount[partner_id] += line_amount_1
+                if not self.env.user.company_id.currency_id.is_zero(line_amount):
+                    partners_amount[partner_id] += line_amount
                     lines[partner_id].append({
                         'line': line,
-                        'amount': line_amount_1,
+                        'amount': line_amount,
                         'period': i + 1,
                     })
             history.append(partners_amount)

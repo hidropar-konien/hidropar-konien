@@ -50,7 +50,7 @@ class AccountAgedTrialBalance(models.TransientModel):
                     'start': (i != 0 and stop.strftime('%Y-%m-%d') or False),
                 }
                 start = stop - relativedelta(days=1)
-        else:
+        if data['form']['direction_selection'] == 'future':
             for i in range(5):
                 stop = start + relativedelta(days=period_length)
                 res[str(5-(i+1))] = {

@@ -144,7 +144,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                     'date': date_from,
-                                })._compute(line.company_id.currency_id, line.currency_id, line.amount_currency)
+                                })._compute(line.currency_id, line.company_id.currency_id, line.amount_currency)
                         line_amount += self.env['res.currency'].with_context(
                             {
                                 'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
@@ -183,7 +183,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                         'date': date_from,
-                                    })._compute(partial_line.company_id.currency_id, partial_line.currency_id, partial_line.amount_currency)
+                                    })._compute(partial_line.currency_id, partial_line.company_id.currency_id, partial_line.amount_currency)
                                 line_amount += self.env['res.currency'].with_context(
                                     {
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
@@ -224,7 +224,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                         'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                         'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                         'date': date_from,
-                                    })._compute(partial_line.company_id.currency_id, partial_line.currency_id,
+                                    })._compute(partial_line.currency_id, partial_line.company_id.currency_id,
                                                 partial_line.amount_currency)
                                 line_amount -= self.env['res.currency'].with_context(
                                     {
@@ -302,7 +302,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                     'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                     'date': date_from,
-                                })._compute(line.company_id.currency_id, line.currency_id, line.amount_currency)
+                                })._compute(line.currency_id, line.company_id.currency_id, line.amount_currency)
                             line_amount += self.env['res.currency'].with_context(
                                 {
                                     'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
@@ -345,7 +345,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                             'date': date_from,
-                                        })._compute(partial_line.company_id.currency_id, partial_line.currency_id,
+                                        })._compute(partial_line.currency_id, partial_line.company_id.currency_id,
                                                     partial_line.amount_currency)
                                     line_amount += self.env['res.currency'].with_context(
                                         {
@@ -389,7 +389,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                             'currency_rate_type_from': line.partner_id.customer_currency_rate_type_id,
                                             'currency_rate_type_to': line.partner_id.customer_currency_rate_type_id,
                                             'date': date_from,
-                                        })._compute(partial_line.company_id.currency_id, partial_line.currency_id,
+                                        })._compute(partial_line.currency_id, partial_line.company_id.currency_id,
                                                     partial_line.amount_currency)
                                     line_amount -= self.env['res.currency'].with_context(
                                         {

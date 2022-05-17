@@ -16,8 +16,8 @@ class AccountAgedTrialBalance(models.TransientModel):
 
     currency_id = fields.Many2one('res.currency', 'Currency', default=_default_currency)
     partner_id = fields.Many2one('res.partner', 'Partner')
-    direction_selection = fields.Selection([('Past', 'Past'), ('Future', 'Future')],
-                                           'Analysis Direction', required=True, default='Past')
+    direction_selection = fields.Selection([('past', 'Past'), ('future', 'Future')],
+                                           'Analysis Direction', required=True, default='past')
 
     @api.multi
     def pre_print_report(self, data):
@@ -40,7 +40,7 @@ class AccountAgedTrialBalance(models.TransientModel):
 
         start = datetime.strptime(data['form']['date_from'], "%Y-%m-%d")
 
-        if data['form']['direction_selection'] == 'Past':
+        if data['form']['direction_selection'] == 'past':
             for i in range(5)[::-1]:
                 stop = start - relativedelta(days=period_length - 1)
                 res[str(i)] = {

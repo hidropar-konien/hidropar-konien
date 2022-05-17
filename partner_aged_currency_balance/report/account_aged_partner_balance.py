@@ -14,10 +14,10 @@ class ReportAgedPartnerBalance(models.AbstractModel):
     _inherit = 'report.account.report_agedpartnerbalance'
 
     def _get_partner_currency_move_lines(self, account_type, date_from, target_move, currency_id, period_length,
-                                       direction_selection='Past', partner_id=False):
+                                       direction_selection='past', partner_id=False):
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
-        if direction_selection == 'Past':
+        if direction_selection == 'past':
             for i in range(5)[::-1]:
                 stop = start - relativedelta(days=period_length)
                 period_name = str((5 - (i + 1)) * period_length + 1) + '-' + str((5 - i) * period_length)
@@ -88,7 +88,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         if not partner_ids:
             return [], [], {}
         undue_amounts = {}
-        if direction_selection == 'Past':
+        if direction_selection == 'past':
             query = '''SELECT l.id
                     FROM account_move_line AS l, account_account, account_move am
                     WHERE (l.account_id = account_account.id) AND (l.move_id = am.id)

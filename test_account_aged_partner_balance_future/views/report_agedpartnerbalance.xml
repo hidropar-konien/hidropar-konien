@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_agedpartnerbalance" inherit_id="account.report_agedpartnerbalance">
+        <xpath expr="//table/thead/tr/th[2]" position="replace">
+            <th class="text-right">
+                <span t-if="data['direction_selection'] == 'past'">Not due</span>
+                <span t-if="data['direction_selection'] == 'future'">Due</span>
+            </th>
+        </xpath>
+
+        <xpath expr="//div[hasclass('page')]/div[2]" position="inside">
+            <div class="col-xs-3">
+                <strong>Analysis Direction:</strong>
+                <p>
+                    <span t-if="data['direction_selection'] == 'past'">Past</span>
+                    <span t-if="data['direction_selection'] == 'future'">Future</span>
+                </p>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -40,7 +40,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     'stop': (i != 4 and stop.strftime('%Y-%m-%d') or False),
                 }
                 start = stop + relativedelta(days=1)
-
+        
+        company = self.env['res.company'].search([('id', '=', 1)])
+        
         res = []
         total = []
         cr = self.env.cr

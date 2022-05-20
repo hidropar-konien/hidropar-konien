@@ -116,7 +116,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         for line in self.env['account.move.line'].browse(aml_ids):
             
             partner_currency = select_currency.with_context(
-                                {}, 
                                     currency_rate_type_from = line.partner_id.customer_currency_rate_type_id,
                                     currency_rate_type_to = line.partner_id.customer_currency_rate_type_id,
                                     date = date_from,
@@ -224,6 +223,8 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     'period': 6,
                 })
         history = []
+        arg = []
+        dates = []
         for i in range(5):
             args_list = (tuple(move_state), tuple(account_type), tuple(partner_ids),)
             dates_query = '(COALESCE(l.date_maturity,l.date)'
@@ -237,7 +238,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 dates_query += ' <= %s)'
                 args_list += (periods[str(i)]['stop'],)
             args_list += (date_from, tuple(company_ids))
-
+            
+            arg.append(args_list)
+            dates.append(dates_query)
             query = '''SELECT l.id
                     FROM account_move_line AS l, account_account, account_move am
                     WHERE (l.account_id = account_account.id) AND (l.move_id = am.id)
@@ -245,15 +248,15 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         AND (account_account.internal_type IN %s)
                         AND ((l.partner_id IN %s) )
                         AND ''' + dates_query + '''
-                    AND (l.date <= %s)
+                    AND (l.date >= %s)
                     AND l.company_id IN %s'''
             cr.execute(query, args_list)
+            
             partners_amount = {}
             aml_ids = cr.fetchall()
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
             for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
                 partner_currency = select_currency.with_context(
-                    {}, 
                         currency_rate_type_from = line.partner_id.customer_currency_rate_type_id,
                         currency_rate_type_to = line.partner_id.customer_currency_rate_type_id,
                         date = date_from,

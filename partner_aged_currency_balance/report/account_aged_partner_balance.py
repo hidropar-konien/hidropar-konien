@@ -248,7 +248,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         AND (account_account.internal_type IN %s)
                         AND ((l.partner_id IN %s) )
                         AND ''' + dates_query + '''
-                    AND (l.date >= %s)
+                    AND (l.date <= %s)
                     AND l.company_id IN %s'''
             cr.execute(query, args_list)
             

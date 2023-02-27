@@ -138,10 +138,10 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
                         line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
                                                                 line.balance)
-                    # elif not line.currency_id:
+                    elif not line.currency_id:
                         # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                        # line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
-                        #                                         line.balance)
+                        line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
+                                                                line.balance)
                     else:
                         # Raporun döviz cinsi, hareket ve şirketin döviz cinsi birbirlerinden farklı ise. Örn: Şirket
                         # Para birimi TL, Hareket : €  Rapor $
@@ -149,8 +149,8 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                                                          line.amount_currency)
                         line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
                                                                 user_currency_amount)
-            if user_currency.is_zero(line_amount):
-                continue
+            # if user_currency.is_zero(line_amount):
+            #     continue
             for partial_line in line.matched_debit_ids:
                 if partial_line.max_date <= date_from:
                     # line_amount += partial_line.amount
@@ -172,10 +172,10 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                 # farklı ise.
                                 line_amount += partner_currency._compute(partial_line.company_id.currency_id,
                                                                          select_currency, partial_line.amount)
-                            # elif not partial_line.currency_id:
-                            #     #  hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                            #     line_amount += partner_currency._compute(partial_line.company_id.currency_id,
-                            #                                              select_currency, partial_line.amount)
+                            elif not partial_line.currency_id:
+                                #  hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
+                                line_amount += partner_currency._compute(partial_line.company_id.currency_id,
+                                                                         select_currency, partial_line.amount)
                             else:
                                 # Raporun döviz cinsi, hareket ve şirketin döviz cinsi birbirlerinden farklı ise.
                                 # Örn: Şirket Para birimi TL, Hareket : €  Rapor $
@@ -205,10 +205,10 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                 # farklı ise.
                                 line_amount -= partner_currency._compute(partial_line.company_id.currency_id,
                                                                          select_currency, partial_line.amount)
-                            # elif not partial_line.currency_id:
-                            #     # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
-                            #     line_amount -= partner_currency._compute(partial_line.company_id.currency_id,
-                            #                                              select_currency, partial_line.amount)
+                            elif not partial_line.currency_id:
+                                # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
+                                line_amount -= partner_currency._compute(partial_line.company_id.currency_id,
+                                                                         select_currency, partial_line.amount)
                             else:
                                 # Raporun döviz cinsi, hareket ve şirketin döviz cinsi birbirlerinden farklı ise.
                                 # Örn: Şirket Para birimi TL, Hareket : €  Rapor $

@@ -225,7 +225,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         history = []
         arg = []
         dates = []
-        ll = ""
         for i in range(5):
             args_list = (tuple(move_state), tuple(account_type), tuple(partner_ids),)
             dates_query = '(COALESCE(l.date_maturity,l.date)'
@@ -257,7 +256,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             aml_ids = cr.fetchall()
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
             for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
-                ll += f"line_id: {line.id} \n"
                 partner_currency = select_currency.with_context(
                         currency_rate_type_from=line.partner_id.customer_currency_rate_type_id,
                         currency_rate_type_to=line.partner_id.customer_currency_rate_type_id,
@@ -360,7 +358,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         'period': i + 1,
                     })
             history.append(partners_amount)
-        raise UserError(ll)
+
         for partner in partners:
             if partner['partner_id'] is None:
                 partner['partner_id'] = False

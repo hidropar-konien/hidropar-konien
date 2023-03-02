@@ -113,8 +113,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             tuple(move_state), tuple(account_type), date_from, tuple(partner_ids), date_from, tuple(company_ids)))
         aml_ids = cr.fetchall()
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
+        ll = ""
         for line in self.env['account.move.line'].browse(aml_ids):
-
+            ll += f"line_id: {line.id}"
             partner_currency = select_currency.with_context(
                                     currency_rate_type_from=line.partner_id.customer_currency_rate_type_id,
                                     currency_rate_type_to=line.partner_id.customer_currency_rate_type_id,
@@ -132,6 +133,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                 if select_currency == line.currency_id:
                     # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
                     line_amount = line.amount_currency
+
                 else:  # değil ise
                     if line.currency_id == user_currency or not line.currency_id:
                         # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
@@ -222,6 +224,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     'amount': line_amount,
                     'period': 6,
                 })
+        raise UserError(ll)
         history = []
         arg = []
         dates = []

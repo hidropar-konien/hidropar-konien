@@ -116,8 +116,8 @@ class ReportAgedPartnerBalance(models.AbstractModel):
         for line in self.env['account.move.line'].browse(aml_ids):
 
             partner_currency = select_currency.with_context(
-                                    currency_rate_type_from = line.partner_id.customer_currency_rate_type_id,
-                                    currency_rate_type_to = line.partner_id.customer_currency_rate_type_id,
+                                    currency_rate_type_from=line.partner_id.customer_currency_rate_type_id,
+                                    currency_rate_type_to=line.partner_id.customer_currency_rate_type_id,
                                     date=date_from,
                                 )
             partner_id = line.partner_id.id or False
@@ -131,7 +131,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             else:
                 if select_currency == line.currency_id:
                     # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                    line_amount = line.amount_currency
+                    # line_amount = line.amount_currency
+                    line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
+                                                            line.balance)
                 else:  # değil ise
                     if line.currency_id == user_currency or not line.currency_id:
                         # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
@@ -162,7 +164,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     else:
                         if select_currency == partial_line.currency_id:
                             # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                            line_amount += partial_line.amount_currency
+                            # line_amount += partial_line.amount_currency
+                            line_amount += ResCurrency._compute(line.company_id.currency_id, user_currency,
+                                                                partial_line.amount)
                         else:
                             # değil ise
                             if partial_line.currency_id == user_currency or not partial_line.currency_id:
@@ -195,7 +199,10 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     else:
                         if select_currency == partial_line.currency_id:
                             # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                            line_amount -= partial_line.amount_currency
+                            # line_amount -= partial_line.amount_currency
+                            line_amount -= ResCurrency._compute(line.company_id.currency_id, user_currency,
+                                                                partial_line.amount)
+                            
                         else:  # değil ise
                             if partial_line.currency_id == user_currency or not partial_line.currency_id:
                                 # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi
@@ -270,7 +277,8 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                     line_amount = ResCurrency._compute(line.company_id.currency_id, user_currency, line.balance)
                 else:
                     if select_currency == line.currency_id:
-                        line_amount = line.amount_currency
+                        # line_amount = line.amount_currency
+                        line_amount = ResCurrency._compute(line.company_id.currency_id, user_currency, line.balance)
                     else:
                         if line.currency_id == user_currency or not line.currency_id:
                             line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
@@ -298,7 +306,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         else:
                             if select_currency == partial_line.currency_id:
                                 # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
-                                line_amount += partial_line.amount_currency
+                                # line_amount += partial_line.amount_currency
+                                line_amount += ResCurrency._compute(line.company_id.currency_id, user_currency,
+                                                                    partial_line.amount)
                             else:  # değil ise
                                 if partial_line.currency_id == user_currency or not line.currency_id:
                                     # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz
@@ -329,7 +339,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         else:
                             if select_currency == partial_line.currency_id:  # Raporun seçilen döviz cinsi, Hareketin
                                 # döviz cinsi ile aynı ise..
-                                line_amount -= partial_line.amount_currency
+                                # line_amount -= partial_line.amount_currency
+                                line_amount -= ResCurrency._compute(line.company_id.currency_id, user_currency,
+                                                                    partial_line.amount)
                             else:  # değil ise
                                 if partial_line.currency_id == user_currency or not line.currency_id:
                                     # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz

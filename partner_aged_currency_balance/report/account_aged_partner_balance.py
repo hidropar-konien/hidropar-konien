@@ -128,11 +128,11 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             if select_currency == user_currency:
                 # Rapor ve Şirket para birimi TL ise:
                 line_amount = ResCurrency._compute(line.company_id.currency_id, user_currency, line.balance)
+                raise UserError('128 : select_currency == user_currency ' % line_amount)
             else:
                 if select_currency == line.currency_id:
                     # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
                     line_amount = line.amount_currency
-                    raise UserError(line_amount)
                 else:  # değil ise
                     if line.currency_id == user_currency or not line.currency_id:
                         # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.

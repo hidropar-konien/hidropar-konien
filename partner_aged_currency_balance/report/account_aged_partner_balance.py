@@ -15,7 +15,6 @@ class ReportAgedPartnerBalance(models.AbstractModel):
 
     def _get_partner_currency_move_lines(self, account_type, date_from, target_move, currency_id, period_length,
                                        direction_selection='past', partner_id=False):
-        raise UserError('18')
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
         if direction_selection == 'past':
@@ -129,15 +128,18 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             if select_currency == user_currency:
                 # Rapor ve Şirket para birimi TL ise:
                 line_amount = ResCurrency._compute(line.company_id.currency_id, user_currency, line.balance)
+                raise UserError('131 : select_currency == user_currency ' % line_amount)
             else:
                 if select_currency == line.currency_id:
                     # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
                     line_amount = line.amount_currency
+                    raise UserError('135 : select_currency == user_currency ' % line_amount)
                 else:  # değil ise
                     if line.currency_id == user_currency or not line.currency_id:
                         # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi farklı ise.
                         line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
                                                                 line.balance)
+                        raise UserError('142 : select_currency == user_currency ' % line_amount)
                     # elif not line.currency_id:
                         # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
                         # line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
@@ -149,6 +151,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                                                          line.amount_currency)
                         line_amount = partner_currency._compute(line.company_id.currency_id, select_currency,
                                                                 user_currency_amount)
+                        raise UserError('154 : select_currency == user_currency ' % line_amount)
             if user_currency.is_zero(line_amount):
                 continue
             for partial_line in line.matched_debit_ids:
@@ -160,10 +163,12 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         # Rapor ve Şirket para birimi TL ise:
                         line_amount += ResCurrency._compute(line.company_id.currency_id, user_currency,
                                                             partial_line.amount)
+                        raise UserError('166 : select_currency == user_currency ' % line_amount)
                     else:
                         if select_currency == partial_line.currency_id:
                             # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
                             line_amount += partial_line.amount_currency
+                            raise UserError('171 : select_currency == user_currency ' % line_amount)
                         else:
                             # değil ise
                             if partial_line.currency_id == user_currency or not partial_line.currency_id:
@@ -171,6 +176,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                 # farklı ise.
                                 line_amount += partner_currency._compute(partial_line.company_id.currency_id,
                                                                          select_currency, partial_line.amount)
+                                raise UserError('179 : select_currency == user_currency ' % line_amount)
                             # elif not partial_line.currency_id:
                             #     #  hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
                             #     line_amount += partner_currency._compute(partial_line.company_id.currency_id,
@@ -183,6 +189,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                                                                  partial_line.amount_currency)
                                 line_amount += partner_currency._compute(partial_line.company_id.currency_id,
                                                                          select_currency, user_currency_amount)
+                                raise UserError('192 : select_currency == user_currency ' % line_amount)
 
             for partial_line in line.matched_credit_ids:
                 if partial_line.max_date <= date_from:
@@ -193,16 +200,19 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         # Rapor ve Şirket para birimi TL ise:
                         line_amount -= ResCurrency._compute(line.company_id.currency_id, user_currency,
                                                             partial_line.amount)
+                        raise UserError('203 : select_currency == user_currency ' % line_amount)
                     else:
                         if select_currency == partial_line.currency_id:
                             # Raporun seçilen döviz cinsi, Hareketin döviz cinsi ile aynı ise..
                             line_amount -= partial_line.amount_currency
+                            raise UserError('208 : select_currency == user_currency ' % line_amount)
                         else:  # değil ise
                             if partial_line.currency_id == user_currency or not partial_line.currency_id:
                                 # hareketin döviz cinsi ve şirket döviz cinsi ile aynı ise ama raporun döviz cinsi
                                 # farklı ise.
                                 line_amount -= partner_currency._compute(partial_line.company_id.currency_id,
                                                                          select_currency, partial_line.amount)
+                                raise UserError('215 : select_currency == user_currency ' % line_amount)
                             # elif not partial_line.currency_id:
                             #     # hareketin döviz cinsi boş ise ama raporun döviz cinsi farklı ise.
                             #     line_amount -= partner_currency._compute(partial_line.company_id.currency_id,
@@ -215,6 +225,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                                                                                  partial_line.amount_currency)
                                 line_amount -= partner_currency._compute(partial_line.company_id.currency_id,
                                                                          select_currency, user_currency_amount)
+                                raise UserError('228 : select_currency == user_currency ' % line_amount)
 
             if not self.env.user.company_id.currency_id.is_zero(line_amount):
                 undue_amounts[partner_id] += line_amount
@@ -258,9 +269,9 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
             for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
                 partner_currency = select_currency.with_context(
-                        currency_rate_type_from = line.partner_id.customer_currency_rate_type_id,
-                        currency_rate_type_to = line.partner_id.customer_currency_rate_type_id,
-                        date = date_from,
+                        currency_rate_type_from=line.partner_id.customer_currency_rate_type_id,
+                        currency_rate_type_to=line.partner_id.customer_currency_rate_type_id,
+                        date=date_from,
                     )
                 partner_id = line.partner_id.id or False
                 if partner_id not in partners_amount:

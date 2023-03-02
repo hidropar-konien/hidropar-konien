@@ -15,7 +15,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
 
     def _get_partner_currency_move_lines(self, account_type, date_from, target_move, currency_id, period_length,
                                        direction_selection='past', partner_id=False):
-        raise UseError('18')
+        raise UserError('18')
         periods = {}
         start = datetime.strptime(date_from, "%Y-%m-%d")
         if direction_selection == 'past':

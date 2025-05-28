@@ -1,0 +1,60 @@
+# -*- coding: utf-8 -*-
+# Copyright 2025 Konien Ltd.Şti.
+
+from odoo import models, api
+import logging
+
+_logger = logging.getLogger(__name__)
+
+
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    @api.model
+    def _get_customer_orders_data(self, partner_id):
+        """
+        Given SQL query is executed to fetch customer's specific order line data.
+        :param partner_id: The ID of the customer (res.partner).
+        :return: A list of dictionaries, each representing a row from the SQL query.
+        """
+        query = """
+            select
+                sol.id as x_id
+                ,so.name as x_order_number
+                ,so.date_order as x_date_order
+                ,so.confirmation_date as x_confirmation_date
+                ,so.partner_id as x_partner_id
+                ,so.client_order_ref as x_musteri_sip_no
+                ,so.user_id as x_temsilci
+                ,sol.sequence2 as x_poz_no
+                ,pp.default_code as x_default_code
+                ,sol.product_id as x_product_id
+                ,sol.name as x_aciklama
+                ,sol.product_uom_qty as x_product_uom_qty
+                ,coalesce((select sum(case sl.usage when 'internal' then ((-1) * smc.product_uom_qty) when 'customer' then smc.product_uom_qty else 0 end) from stock_move smc join stock_location sl on sl.id = smc.location_dest_id where smc.sale_line_id = sol.id and smc.state = 'done'),0) as x_teslim_edilen
+                ,(sol.product_uom_qty - coalesce((select sum(case sl.usage when 'internal' then ((-1) * smc.product_uom_qty) when 'customer' then smc.product_uom_qty else 0 end) from stock_move smc join stock_location sl on sl.id = smc.location_dest_id where smc.sale_line_id = sol.id and smc.state = 'done'),0)) as x_kalan_miktar
+                ,(select smg.date_expected::DATE from stock_move smcks
+                    join stock_move_move_rel smmr on smmr.move_dest_id = smcks.id
+                    join stock_move smg on smg.id = smmr.move_orig_id
+                    where smg.sale_line_id isnull and smcks.sale_line_id = sol.id and smcks.state not in ('cancel','done') order by smg.date_expected desc limit 1) as x_yola_cikis_tarihi
+                ,(select case so.id when 1266 then (smg.date_expected + INTERVAL '24 day')::DATE    when 1271 then (smg.date_expected + INTERVAL '24 day')::DATE when 973 then (smg.date_expected + INTERVAL '24 day')::DATE when 763 then (smg.date_expected + INTERVAL '24 day')::DATE
+                            when 1221 then (smg.date_expected + INTERVAL '24 day')::DATE when 1196 then (smg.date_expected + INTERVAL '24 day')::DATE else (smg.date_expected + INTERVAL '17 day')::DATE end from stock_move smcks
+                    join stock_move_move_rel smmr on smmr.move_dest_id = smcks.id
+                    join stock_move smg on smg.id = smmr.move_orig_id
+                    where smg.sale_line_id isnull and smcks.sale_line_id = sol.id and smcks.state not in ('cancel','done') order by smg.date_expected desc limit 1) as x_ongprulen_teslim_tarihi
+                ,(select smg.origin from stock_move smcks
+                    join stock_move_move_rel smmr on smmr.move_dest_id = smcks.id
+                    join stock_move smg on smg.id = smmr.move_orig_id
+                    where smg.sale_line_id isnull and smcks.sale_line_id = sol.id and smcks.state not in ('cancel','done') order by smg.date_expected desc limit 1) as x_po_number
+            from sale_order_line sol
+            join sale_order so on so.id = sol.order_id
+            join product_product pp on pp.id = sol.product_id
+            join product_template pt on pt.id = pp.product_tmpl_id
+            where pt."type" = 'product'  and so.state in ('sale','done','reserved')
+            and so.partner_id = %s  
+            and (sol.product_uom_qty - coalesce((select sum(case sl.usage when 'internal' then ((-1) * smc.product_uom_qty) when 'customer' then smc.product_uom_qty else 0 end) from stock_move smc join stock_location sl on sl.id = smc.location_dest_id where smc.sale_line_id = sol.id and smc.state = 'done'),0))  != 0
+            and so.invoice_status != 'invoiced'
+        """
+        self.env.cr.execute(query, (partner_id,))
+        result = self.env.cr.dictfetchall()
+        return result

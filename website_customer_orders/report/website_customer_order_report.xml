@@ -1,0 +1,76 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="website_customer_order_report_pivot">
+            <field name="name">website.customer.order.report.pivot</field>
+            <field name="model">website.customer.order.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Website Customer Order Report">
+                    <field name="partner_id" type="row"/>
+                    <field name="order_number" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
+<!--        <record id="act_report_xml_view_tree" model="ir.ui.view">-->
+<!--            <field name="name">ir.actions.report.tree</field>-->
+<!--            <field name="model">ir.actions.report</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <tree string="Report xml">-->
+<!--                    <field name="name"/>-->
+<!--                    <field name="model"/>-->
+<!--                    <field name="type"/>-->
+<!--                    <field name="report_name"/>-->
+<!--                    <field name="report_type"/>-->
+<!--                    <field name="attachment"/>-->
+<!--                </tree>-->
+<!--            </field>-->
+<!--        </record>-->
+
+        <record id="website_customer_order_report_tree" model="ir.ui.view">
+            <field name="name">website.customer.order.report.tree</field>
+            <field name="model">website.customer.order.report</field>
+            <field name="arch" type="xml">
+                <tree string="Website Customer Order Report" editable="bottom">
+                    <field name="order_number"/>
+                    <field name="date_order"/>
+                    <field name="confirmation_date"/>
+                    <field name="partner_id"/>
+                    <field name="musteri_sip_no"/>
+                    <field name="temsilci"/>
+<!--                    <field name="poz_no"/>-->
+                    <field name="default_code"/>
+                    <field name="product_id"/>
+                    <field name="aciklama"/>
+                    <field name="product_uom_qty"/>
+                    <field name="teslim_edilen"/>
+                    <field name="kalan_miktar"/>
+                    <field name="yola_cikis_tarihi"/>
+                    <field name="ongorulen_teslim_tarihi"/>
+                    <field name="po_number"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="website_customer_order_report_search" model="ir.ui.view">
+            <field name="name">website.customer.order.report.search</field>
+            <field name="model">website.customer.order.report</field>
+            <field name="arch" type="xml">
+                <search string="Website Customer Order Report">
+                    <group name="group_website_customer_order_report_search" string="Group By">
+                        <filter string="Partner" name="partner_id" context="{'group_by':'partner_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_website_customer_order_report" model="ir.actions.act_window">
+            <field name="name">Customer Sale Order Report</field>
+            <field name="res_model">website.customer.order.report</field>
+            <field name="view_mode">tree</field>
+             <field name="view_id" ref="website_customer_order_report_tree"/>
+        </record>
+
+        <menuitem action="action_website_customer_order_report"
+                  id="menu_website_customer_order_report" parent="account.account_reports_management_menu"/>
+    </data>
+</odoo>

@@ -14,9 +14,9 @@
     'version': '11.0.1.0.0',
     'depends': ['portal', 'sale_management', 'stock'],
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/portal_templates.xml',
-        # 'views/assets.xml',
+        'report/website_customer_order_report.xml',
     ],
     'installable': True,
     'application': False,

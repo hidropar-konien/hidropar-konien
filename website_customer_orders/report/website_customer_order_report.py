@@ -1,24 +1,63 @@
 # -*- coding: utf-8 -*-
 # Copyright 2025 Konien Ltd.Şti.
 
-from odoo import models, api
+from odoo import models, fields, tools, api, exceptions, _
+from requests.auth import HTTPBasicAuth
+from odoo.exceptions import UserError
+import time, requests
 import logging
 
 _logger = logging.getLogger(__name__)
 
 
-class SaleOrder(models.Model):
-    _inherit = 'sale.order'
+class WebsiteCustomerOrderReport(models.Model):
+    _name = "website.customer.order.report"
+    _description = "Website Customer Order Report"
+    _auto = False
+    _rec_name = "order_number"
+    _order = "order_number asc"
 
-#                 --,sol.sequence2 as poz_no
+    id = fields.Integer(string="Id")
+    order_number = fields.Char(string="Order Number")
+    date_order = fields.Date(string="Date Order")
+    confirmation_date = fields.Date(string="Confirmation Date")
+    partner_id = fields.Many2one(comodel_name="res.partner", string="Partner")
+    musteri_sip_no = fields.Char(string="Müşteri Sipariş No")
+    temsilci = fields.Many2one(comodel_name="res.users", string="Temsilci")
+    # poz_no = fields.Char(string="Poz No")
+    default_code = fields.Char(string="Defualt Code")
+    product_id = fields.Many2one(comodel_name="product.product", string="Product")
+    aciklama = fields.Char(string="Açıklama")
+    product_uom_qty = fields.Float(string="Product Uom Qty")
+    teslim_edilen = fields.Float(string="Teslim Edilen")
+    kalan_miktar = fields.Float(string="Kalan Miktar")
+    yola_cikis_tarihi = fields.Date(string="Yola Çıkış Tarihi")
+    ongorulen_teslim_tarihi = fields.Date(string="ongorulen_teslim_tarihi")
+    po_number = fields.Char(string="PO Number")
+
+
+    _depends = {
+        'sale.order': [
+            'id', 'name', 'date_order', 'confirmation_date', 'partner_id', 'client_order_ref', 'user_id'
+        ],
+        'sale.order.line': [
+            'order_id', 'name', 'product_id', 'product_uom_qty'
+        ],
+        'stock.move': [
+            'sale_line_id', 'location_dest_id'
+        ],
+        'stock.location': [
+            'usage'
+        ],
+        'product.product': [
+            'default_code'
+        ]
+    }
+
+    #, sol.sequence2 as poz_no
     @api.model
-    def _get_customer_orders_data(self, partner_id):
-        """
-        Given SQL query is executed to fetch customer's specific order line data.
-        :param partner_id: The ID of the customer (res.partner).
-        :return: A list of dictionaries, each representing a row from the SQL query.
-        """
-        query = """
+    def _select(self):
+        return """
             select
                 sol.id as id
                 ,so.name as order_number
@@ -47,27 +86,30 @@ class SaleOrder(models.Model):
                     join stock_move_move_rel smmr on smmr.move_dest_id = smcks.id
                     join stock_move smg on smg.id = smmr.move_orig_id
                     where smg.sale_line_id isnull and smcks.sale_line_id = sol.id and smcks.state not in ('cancel','done') order by smg.date_expected desc limit 1) as po_number
+        """
+
+    @api.model
+    def _from(self):
+        return """
             from sale_order_line sol
             join sale_order so on so.id = sol.order_id
             join product_product pp on pp.id = sol.product_id
             join product_template pt on pt.id = pp.product_tmpl_id
-            where pt."type" = 'product'  and so.state in ('sale','done','reserved')
-            and so.partner_id = %s  
+        """
+
+    @api.model
+    def _where(self):
+        return """
+        where pt."type" = 'product'  and so.state in ('sale','done','reserved')
             and (sol.product_uom_qty - coalesce((select sum(case sl.usage when 'internal' then ((-1) * smc.product_uom_qty) when 'customer' then smc.product_uom_qty else 0 end) from stock_move smc join stock_location sl on sl.id = smc.location_dest_id where smc.sale_line_id = sol.id and smc.state = 'done'),0))  != 0
             and so.invoice_status != 'invoiced'
         """
-        self.env.cr.execute(query, (partner_id,))
-        result = self.env.cr.dictfetchall()
-        return result
 
-
-class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
-class ProductProduct(models.Model):
-    _inherit = "product.product"
-class ProductTemplate(models.Model):
-    _inherit = "product.template"
-class StockMove(models.Model):
-    _inherit = "stock.move"
-class StockLocation(models.Model):
-    _inherit = "stock.location"
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, self._table)
+        self.env.cr.execute("""CREATE OR REPLACE VIEW %s as (
+            %s
+            %s
+            %s
+            )
+        """ % (self._table, self._select(), self._from(), self._where()))

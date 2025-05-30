@@ -46,7 +46,7 @@ class CustomerOrdersPortal(CustomerPortal):
         values.update({
             'orders_data': current_page_orders,
             'page_name': 'orders',
-            # 'pager': pager,
+            'pager': pager,
             'default_url': '/customer/orders',
         })
         return request.render("website_customer_orders.portal_customer_orders_template", values)

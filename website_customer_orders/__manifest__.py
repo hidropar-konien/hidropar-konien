@@ -15,6 +15,7 @@
     'depends': ['portal', 'sale_management', 'stock'],
     'data': [
         'security/ir.model.access.csv',
+        'security/sale_security.xml',
         'views/portal_templates.xml',
         'report/website_customer_order_report.xml',
     ],

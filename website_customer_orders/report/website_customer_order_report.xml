@@ -71,6 +71,6 @@
         </record>
 
         <menuitem action="action_website_customer_order_report"
-                  id="menu_website_customer_order_report" parent="account.account_reports_management_menu"/>
+                  id="menu_website_customer_order_report" parent="sale.menu_sale_report"/>
     </data>
 </odoo>

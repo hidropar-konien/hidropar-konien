@@ -24,7 +24,7 @@ class WebsiteCustomerOrderReport(models.Model):
     partner_id = fields.Many2one(comodel_name="res.partner", string="Partner")
     musteri_sip_no = fields.Char(string="Müşteri Sipariş No")
     temsilci = fields.Many2one(comodel_name="res.users", string="Temsilci")
-    # poz_no = fields.Char(string="Poz No")
+    poz_no = fields.Char(string="Poz No")
     default_code = fields.Char(string="Defualt Code")
     product_id = fields.Many2one(comodel_name="product.product", string="Product")
     aciklama = fields.Char(string="Açıklama")
@@ -66,7 +66,7 @@ class WebsiteCustomerOrderReport(models.Model):
                 ,so.partner_id as partner_id
                 ,so.client_order_ref as musteri_sip_no
                 ,so.user_id as temsilci
-
+                ,sol.sequence2 as poz_no
                 ,pp.default_code as default_code
                 ,sol.product_id as product_id
                 ,sol.name as aciklama

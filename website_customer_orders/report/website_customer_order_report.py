@@ -66,7 +66,7 @@ class WebsiteCustomerOrderReport(models.Model):
                 ,so.partner_id as partner_id
                 ,so.client_order_ref as musteri_sip_no
                 ,so.user_id as temsilci
-                ,sol.sequence2 as poz_no
+
                 ,pp.default_code as default_code
                 ,sol.product_id as product_id
                 ,sol.name as aciklama

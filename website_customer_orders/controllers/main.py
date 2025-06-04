@@ -23,6 +23,7 @@ class CustomerOrdersPortal(CustomerPortal):
         _logger.info("USER: %s" % user.partner_id.commercial_partner_id.name)
 
         partner_to_query = user.partner_id.commercial_partner_id
+
         all_orders_data = request.env['sale.order']._get_customer_orders_data(partner_to_query.id)
         pager = portal_pager(
             url="/customer/orders",
@@ -31,6 +32,7 @@ class CustomerOrdersPortal(CustomerPortal):
             page=page,
             step=self._items_per_page
         )
+
 
         offset = pager['offset']
         items_per_page = self._items_per_page

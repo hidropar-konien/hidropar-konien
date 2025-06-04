@@ -51,7 +51,9 @@
                                         <td>
                                             <span t-esc="order_line.get('temsilci')"/>
                                         </td>
-                                        <!--                                            <td><span t-field="order_line.poz_no"/></td>-->
+                                            <td>
+                                                <span t-field="order_line.poz_no"/>
+                                            </td>
                                         <td>
                                             <span t-esc="order_line.get('default_code')"/>
                                         </td>

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright 2025 Konien Ltd.Şti.
 
-# from addons.mail.models.mail_alias import AliasMixin
 from odoo import http, _
 from odoo.http import request
 from odoo.tools import consteq
@@ -24,26 +23,20 @@ class CustomerOrdersPortal(CustomerPortal):
         _logger.info("USER: %s" % user.partner_id.commercial_partner_id.name)
 
         partner_to_query = user.partner_id.commercial_partner_id
-        report_model = request.env["sale.order"]
-        domain = []
-        total_orders = report_model.search_count(domain)
-
-        # all_orders_data = request.env['sale.order']._get_customer_orders_data(partner_to_query.id)
+        all_orders_data = request.env['sale.order']._get_customer_orders_data(partner_to_query.id)
         pager = portal_pager(
             url="/customer/orders",
-            # url_args={'page': page}, # 'page' zaten URL'de, bu satır gereksiz olabilir
-            total= total_orders, # len(all_orders_data),  # Toplam öğe sayısı
+            # url_args={'page': page},
+            total=len(all_orders_data),
             page=page,
-            step=self._items_per_page  # CustomerPortal'dan gelen sayfa başına öğe sayısı
+            step=self._items_per_page
         )
 
         offset = pager['offset']
-        items_per_page = self._items_per_page  # Daha okunaklı olması için
+        items_per_page = self._items_per_page
 
-        # 3. Sadece mevcut sayfaya ait verileri dilimle
-        #    orders_data[offset:offset] YERİNE all_orders_data[offset : offset + items_per_page] KULLANILMALI
-        # current_page_orders = all_orders_data[offset: offset + items_per_page]
-        current_page_orders = report_model.search(domain, limit=self._items_per_page, offset=offset, order='date_order DESC, order_number DESC, poz_no ASC')
+        current_page_orders = all_orders_data[offset: offset + items_per_page]
+
         # offset = pager['offset']
         # limit = pager['limit']
         # current_page_orders = orders_data[offset:offset]

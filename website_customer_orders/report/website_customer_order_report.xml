@@ -30,14 +30,14 @@
             <field name="name">website.customer.order.report.tree</field>
             <field name="model">website.customer.order.report</field>
             <field name="arch" type="xml">
-                <tree string="Website Customer Order Report" editable="bottom">
+                <tree string="Website Customer Order Report" delete="false" create="false">
                     <field name="order_number"/>
                     <field name="date_order"/>
                     <field name="confirmation_date"/>
                     <field name="partner_id"/>
                     <field name="musteri_sip_no"/>
                     <field name="temsilci"/>
-<!--                    <field name="poz_no"/>-->
+                    <field name="poz_no"/>
                     <field name="default_code"/>
                     <field name="product_id"/>
                     <field name="aciklama"/>

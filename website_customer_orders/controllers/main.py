@@ -18,9 +18,9 @@ class CustomerOrdersPortal(CustomerPortal):
     def portal_customer_orders(self, page=1, **kw):
         values = self._prepare_portal_layout_values()
         user = request.env.user
-        partner = user.partner_id.parent_id
-        _logger.info("USER: %s" % user)
-        _logger.info("USER: %s" % user.partner_id.commercial_partner_id.name)
+        # partner = user.partner_id.parent_id
+        # _logger.info("USER: %s" % user)
+        # _logger.info("USER: %s" % user.partner_id.commercial_partner_id.name)
 
         partner_to_query = user.partner_id.commercial_partner_id
 

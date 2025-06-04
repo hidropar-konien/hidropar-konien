@@ -2,7 +2,7 @@
 <odoo>
     <template id="portal_customer_orders_template" name="My Orders">
         <t t-call="portal.portal_layout">
-<!--            <t t-set="breadcrumbs_searchbar" t-value="True"/>-->
+            <!--            <t t-set="breadcrumbs_searchbar" t-value="True"/>-->
 
             <t t-call="portal.portal_searchbar">
                 <t t-set="title">My Orders</t>
@@ -41,7 +41,8 @@
                                             <span t-esc="order_line.get('order_number')"/>
                                         </td>
                                         <td>
-    <span t-esc="order_line.get('date_order')"/> <!-- Bu t-options t-esc ile çalışmayabilir, t-field gerektirir. Alternatif: -->                                        </td>
+                                            <span t-esc="order_line.get('date_order')"/>
+                                        </td>
                                         <td>
                                             <span t-esc="order_line.get('confirmation_date')"/>
                                         </td>
@@ -51,9 +52,9 @@
                                         <td>
                                             <span t-esc="order_line.get('temsilci')"/>
                                         </td>
-                                            <td>
-                                                <span t-field="order_line.poz_no"/>
-                                            </td>
+                                        <td>
+                                            <span t-field="order_line.get('poz_no')"/>
+                                        </td>
                                         <td>
                                             <span t-esc="order_line.get('default_code')"/>
                                         </td>
@@ -81,17 +82,17 @@
                                     </tr>
                                 </t>
                             </t>
-<!--                            <t t-else="">-->
-<!--                                <tr>-->
-<!--                                    <td colspan="14" class="text-center">No orders found.</td>-->
-<!--                                </tr>-->
-<!--                            </t>-->
+                            <!--                            <t t-else="">-->
+                            <!--                                <tr>-->
+                            <!--                                    <td colspan="14" class="text-center">No orders found.</td>-->
+                            <!--                                </tr>-->
+                            <!--                            </t>-->
                         </tbody>
                     </table>
                 </div>
                 <div t-if="pager" class="o_portal_pager text-center">
-              <t t-call="portal.pager"/>
-            </div>
+                    <t t-call="portal.pager"/>
+                </div>
             </div>
         </t>
     </template>

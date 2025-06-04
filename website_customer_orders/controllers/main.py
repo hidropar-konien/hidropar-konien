@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright 2025 Konien Ltd.Şti.
-from addons.mail.models.mail_alias import AliasMixin
+
+# from addons.mail.models.mail_alias import AliasMixin
 from odoo import http, _
 from odoo.http import request
 from odoo.tools import consteq

@@ -52,14 +52,15 @@ class SaleOrder(models.Model):
             join product_product pp on pp.id = sol.product_id
             join product_template pt on pt.id = pp.product_tmpl_id
             where pt."type" = 'product'  and so.state in ('sale','done','reserved')
-            and so.partner_id = %s  
+
             and (sol.product_uom_qty - coalesce((select sum(case sl.usage when 'internal' then ((-1) * smc.product_uom_qty) when 'customer' then smc.product_uom_qty else 0 end) from stock_move smc join stock_location sl on sl.id = smc.location_dest_id where smc.sale_line_id = sol.id and smc.state = 'done'),0))  != 0
             and so.invoice_status != 'invoiced'
         """
-        self.env.cr.execute(query, (partner_id,))
+        self.env.cr.execute(query)
         result = self.env.cr.dictfetchall()
         return result
 
+#             and so.partner_id = %s  self.env.cr.execute(query, (partner_id,))
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"

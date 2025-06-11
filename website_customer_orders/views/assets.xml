@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="customer_orders_assets_frontend" inherit_id="website.assets_frontend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/less" href="/website_customer_orders/static/src/css/style.less"/>
+                <script type="text/javascript" src="/website_customer_orders/static/src/js/script.js"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -44,7 +44,7 @@
                                             <span t-esc="order_line.get('date_order')" t-options="{'widget': 'date'}"/>
                                         </td>
                                         <td>
-                                            <span t-field="order_line.get('poz_no')"/>
+                                            <span t-esc="order_line.get('poz_no')"/>
                                         </td>
                                         <td>
                                             <span t-esc="order_line.get('default_code')"/>

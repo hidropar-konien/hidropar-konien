@@ -1,0 +1,14 @@
+/********Start css code********/
+
+.sticky_homemenu_afterlogin{
+	top:32px; 
+	position:fixed;
+	width:100%;
+}
+.sticky_homemenu_beforelogin{
+	top:0px; 
+	position:fixed;
+	width:100%;
+}
+
+/********End css code********/

@@ -8,26 +8,66 @@
         </xpath>
     </template>
 
-    <!-- Template to replace the default logo with multiple logos -->
-    <template id="layout_multiple_logos" inherit_id="website.layout_logo_show" name="Show Multiple Logos">
-        <xpath expr="//header//a[hasclass('navbar-brand')]" position="replace">
-            <!-- If custom logos are defined, loop through them -->
-            <t t-if="website and website.header_logo_ids">
-                <div class="d-flex align-items-center">
-                    <t t-foreach="website.header_logo_ids.filtered(lambda l: l.active)" t-as="header_logo">
-                        <a t-att-href="header_logo.url or '/'" class="navbar-brand-logo" t-att-target="'_blank' if header_logo.url and not header_logo.url.startswith('/') else None">
-                            <img t-attf-src="/web/image/website.header.logo/#{header_logo.id}/logo"
-                                 style="max-height: 45px; margin: 0 8px; vertical-align: middle;"/>
-                        </a>
-                    </t>
+    <!--
+        This template completely replaces the website's header.
+        This is a more robust approach that prevents conflicts with other modules or default styles
+        that might interfere with the sticky behavior.
+    -->
+    <template id="layout_multiple_logos" inherit_id="website.layout" name="Sticky Header with Multiple Logos">
+        <xpath expr="//div[@id='wrapwrap']/header" position="replace">
+            <header id="top">
+                <div class="navbar navbar-default navbar-static-top">
+                    <div class="container">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+
+                            <!-- Custom Logo Logic -->
+                            <t t-if="website and website.header_logo_ids">
+                                <div style="float: left;">
+                                    <t t-foreach="website.header_logo_ids.filtered(lambda l: l.active)" t-as="header_logo">
+                                        <a t-att-href="header_logo.url or '/'" class="navbar-brand" t-att-target="'_blank' if header_logo.url and not header_logo.url.startswith('/') else None" style="padding: 5px 8px;">
+                                            <img t-attf-src="/web/image/website.header.logo/#{header_logo.id}/logo" style="max-height: 40px; height: 40px;"/>
+                                        </a>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <!-- Fallback to default logo -->
+                                <a href="/" class="navbar-brand logo">
+                                    <span t-field="res_company.logo" t-options="{'widget': 'image'}" t-att-alt="'Logo of %s' % res_company.name" t-att-title="res_company.name" />
+                                </a>
+                            </t>
+                        </div>
+                        <div class="collapse navbar-collapse navbar-top-collapse">
+                            <ul class="nav navbar-nav navbar-right" id="top_menu">
+                                <!-- Re-implement the main menu logic from website module -->
+                                <t t-foreach="website.menu_id.child_id" t-as="submenu">
+                                    <t t-call="website.submenu"/>
+                                </t>
+                                <!-- Re-implement the user menu logic from portal module -->
+                                <li class="divider" t-if="website.user_id != user_id"/>
+                                <li class="dropdown" t-if="website.user_id != user_id">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <b>
+                                            <span t-esc="(len(user_id.name)&gt;25) and (user_id.name[:23]+'...') or user_id.name"/>
+                                            <span class="caret"></span>
+                                        </b>
+                                    </a>
+                                    <ul class="dropdown-menu js_usermenu" role="menu">
+                                        <li><a href="/my/home" role="menuitem">My Account</a></li>
+                                        <li id="o_logout"><a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </t>
-            <t t-else="">
-                <!-- Otherwise, fallback to the default company logo -->
-                <a href="/" class="navbar-brand logo">
-                    <span t-field="res_company.logo" t-options="{'widget': 'image'}" t-att-alt="'Logo of %s' % res_company.name" t-att-title="res_company.name" />
-                </a>
-            </t>
+            </header>
         </xpath>
     </template>
 </odoo>

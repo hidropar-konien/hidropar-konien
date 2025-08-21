@@ -1,10 +1,14 @@
-header.o_header_sticky {
-    position: fixed;
-    top: 0;
+body.o_header_is_sticky {
+    padding-top: 70px;
+}
+
+header#top.o_header_sticky {
+    position: fixed !important;
+    top: 0 !important;
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 1030; /* Bootstrap'in sabitlenmiş navbar için kullandığı z-index değeri */
+    z-index: 1030 !important;
     animation: slide-down 0.4s;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }

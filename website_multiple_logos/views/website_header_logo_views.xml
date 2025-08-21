@@ -8,7 +8,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="logo" widget="image" class="oe_avatar"/>
                 <field name="url"/>
-                <field name="active"/>
+                <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
     </record>

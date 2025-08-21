@@ -45,53 +45,66 @@ body.o_header_is_sticky header#top {
     background: #fff;
     width: 100%;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    min-height: 100px;
+    min-height: 70px;
     display: flex;
     align-items: center;
     padding: 0;
 }
 
+.navbar.navbar-default.navbar-static-top > .container {
+    display: flex;
+    align-items: center;
+    min-height: 70px;
+    justify-content: space-between;
+    padding: 0 15px;
+}
+
 .multiple-logos {
     display: flex;
     align-items: center;
-    margin-right: 30px;
+    margin-right: 0;
 }
 
 .multiple-logos img {
     margin-right: 16px;
-    max-height: 70px;
-    height: 70px;
+    max-height: 60px;
+    height: 60px;
     width: auto;
-}
-
-/* Menü linklerini logolarla orantılı büyüt */
-.navbar-nav.navbar-left > li > a,
-.navbar-nav.navbar-left > li > .dropdown-toggle {
-    font-size: 14px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    height: auto;
-    display: block;
-    align-items: unset;
-}
-
-.navbar-nav.navbar-left {
-    margin-left: 0;
 }
 
 .navbar-header {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
 }
 
+.collapse.navbar-collapse.navbar-top-collapse {
+    display: flex !important;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+}
+
+.navbar-nav.navbar-left {
+    margin-left: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Menü linkleri sağa yaslanır */
+#top_menu {
+    margin-left: auto;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .header-logo-multiple {
+    .header-logo-multiple,
+    .navbar.navbar-default.navbar-static-top > .container {
         min-height: 50px;
-        padding: 0 10px;
+        padding: 0 5px;
     }
     .multiple-logos img {
-        max-height: 40px;
-        height: 40px;
+        max-height: 35px;
+        height: 35px;
     }
     .navbar-nav.navbar-left > li > a,
     .navbar-nav.navbar-left > li > .dropdown-toggle {

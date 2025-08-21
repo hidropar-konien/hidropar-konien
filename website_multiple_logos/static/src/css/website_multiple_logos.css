@@ -47,7 +47,7 @@ body.o_header_is_sticky header#top {
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     min-height: 70px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     padding: 0;
 }
 
@@ -62,7 +62,8 @@ body.o_header_is_sticky header#top {
 .multiple-logos {
     display: flex;
     align-items: center;
-    margin-right: 0;
+    height: 70px;
+    padding: 0;
 }
 
 .multiple-logos img {
@@ -70,47 +71,57 @@ body.o_header_is_sticky header#top {
     max-height: 60px;
     height: 60px;
     width: auto;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-top: 0;
+    margin-bottom: 0;
+    display: block;
 }
 
 .navbar-header {
     display: flex;
     align-items: center;
     flex: 0 0 auto;
+    height: 70px;
 }
 
 .collapse.navbar-collapse.navbar-top-collapse {
     display: flex !important;
     justify-content: flex-end;
     flex: 1 1 auto;
+    align-items: center;
+    height: 70px;
 }
 
 .navbar-nav.navbar-left {
     margin-left: 0;
     display: flex;
     align-items: center;
+    height: 70px;
 }
 
 /* Menü linkleri sağa yaslanır */
 #top_menu {
     margin-left: auto;
+    display: flex;
+    align-items: center;
+    height: 70px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .header-logo-multiple,
-    .navbar.navbar-default.navbar-static-top > .container {
+    .navbar.navbar-default.navbar-static-top > .container,
+    .multiple-logos,
+    .navbar-header,
+    .collapse.navbar-collapse.navbar-top-collapse,
+    .navbar-nav.navbar-left,
+    #top_menu {
         min-height: 50px;
-        padding: 0 5px;
+        height: 50px;
     }
     .multiple-logos img {
         max-height: 35px;
         height: 35px;
-    }
-    .navbar-nav.navbar-left > li > a,
-    .navbar-nav.navbar-left > li > .dropdown-toggle {
-        font-size: 1em;
-        padding-top: 15px;
-        padding-bottom: 15px;
-        height: 40px;
     }
 }

@@ -45,7 +45,7 @@ body.o_header_is_sticky header#top {
     background: #fff;
     width: 100%;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    min-height: 100px; /* Header yüksekliği artırıldı */
+    min-height: 100px;
     display: flex;
     align-items: center;
     padding: 0;
@@ -67,12 +67,12 @@ body.o_header_is_sticky header#top {
 /* Menü linklerini logolarla orantılı büyüt */
 .navbar-nav.navbar-left > li > a,
 .navbar-nav.navbar-left > li > .dropdown-toggle {
-    font-size: 1.35em;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    height: 70px;
-    display: flex;
-    align-items: center;
+    font-size: 14px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    height: auto;
+    display: block;
+    align-items: unset;
 }
 
 .navbar-nav.navbar-left {
@@ -86,7 +86,7 @@ body.o_header_is_sticky header#top {
 
 @media (max-width: 768px) {
     .header-logo-multiple {
-        min-height: 70px;
+        min-height: 50px;
         padding: 0 10px;
     }
     .multiple-logos img {

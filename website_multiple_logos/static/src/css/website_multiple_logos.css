@@ -73,9 +73,11 @@ body.o_header_is_sticky header#top {
     width: auto;
     object-fit: contain;
     vertical-align: middle;
+    display: flex;
+    align-items: center;
+    /* Taşmayı engellemek için margin ve padding kaldırıldı */
     margin-top: 0;
     margin-bottom: 0;
-    display: block;
 }
 
 .navbar-header {

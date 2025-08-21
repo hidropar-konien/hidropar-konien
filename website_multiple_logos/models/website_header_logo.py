@@ -3,7 +3,6 @@
 
 from odoo import fields, models
 
-
 class WebsiteHeaderLogo(models.Model):
     _name = 'website.header.logo'
     _description = 'Website Header Logo'
@@ -13,7 +12,7 @@ class WebsiteHeaderLogo(models.Model):
     logo = fields.Binary(string="Logo", required=True, attachment=True)
     url = fields.Char(string="URL", help="URL to redirect to when the logo is clicked.")
     website_id = fields.Many2one(
-        'website',
+        'website.website',
         string="Website",
         ondelete='cascade',
         required=True,

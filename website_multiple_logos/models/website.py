@@ -4,7 +4,7 @@
 from odoo import fields, models
 
 class Website(models.Model):
-    _inherit = 'website'
+    _inherit = 'website.website'
 
     header_logo_ids = fields.One2many(
         'website.header.logo',

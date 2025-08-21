@@ -1,27 +1,28 @@
 /*
-  This is the "Nuclear Option" for the sticky header.
-  It uses the body class to increase specificity and resets any transform
-  on the main wrapper that might interfere with `position: fixed`.
+  This is the final, "bulletproof" version for the sticky header.
+  It uses high specificity and resets potential conflicting properties.
 */
+
+/* This class is added to the body by JS. The JS also adds dynamic padding-top. */
 body.o_header_is_sticky {
-    /* The JS dynamically adds 'padding-top' here to prevent content jump. */
 }
 
+/* This resets a 'transform' property on the wrapper that can break 'position: fixed'. A common Odoo issue. */
 body.o_header_is_sticky #wrapwrap {
-    /* This resets any transform property on the parent that could break `position: fixed` behavior. */
     transform: none !important;
 }
 
+/* This is the main rule. It's highly specific to win any CSS war. */
 body.o_header_is_sticky header#top {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
-    z-index: 1030 !important; /* Standard z-index for fixed navbars, !important to be safe */
+    z-index: 1030 !important; /* Ensures it stays on top of other content */
     animation: slide-down 0.4s;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff !important; /* Add a background color to prevent content from showing through */
+    background-color: #ffffff !important; /* Prevents content from showing through the transparent header */
 }
 
 @keyframes slide-down {

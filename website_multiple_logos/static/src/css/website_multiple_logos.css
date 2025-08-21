@@ -64,6 +64,17 @@ body.o_header_is_sticky header#top {
     width: auto;
 }
 
+/* Menü linklerini logolarla orantılı büyüt */
+.navbar-nav.navbar-left > li > a,
+.navbar-nav.navbar-left > li > .dropdown-toggle {
+    font-size: 1.35em;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
 .navbar-nav.navbar-left {
     margin-left: 0;
 }
@@ -81,3 +92,12 @@ body.o_header_is_sticky header#top {
     .multiple-logos img {
         max-height: 40px;
         height: 40px;
+    }
+    .navbar-nav.navbar-left > li > a,
+    .navbar-nav.navbar-left > li > .dropdown-toggle {
+        font-size: 1em;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: 40px;
+    }
+}

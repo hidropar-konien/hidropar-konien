@@ -1,15 +1,26 @@
+/*
+  This class is added to the body by the JS.
+  The JS will also dynamically add a 'padding-top' to the body element
+  to prevent the page content from jumping up when the header becomes fixed.
+*/
 body.o_header_is_sticky {
+    /* The padding-top is now set by javascript dynamically. This rule is a placeholder. */
 }
 
+/*
+  This is the main rule for the sticky header.
+  We use a specific selector and !important to ensure it overrides any default theme styles.
+*/
 #wrapwrap > header#top.o_header_sticky {
-    position: fixed;
-    top: 0;
+    position: fixed !important;
+    top: 0 !important;
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 1030;
+    z-index: 1030 !important; /* Standard z-index for fixed navbars, !important to be safe */
     animation: slide-down 0.4s;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff; /* Add a background color to prevent content from showing through */
 }
 
 @keyframes slide-down {

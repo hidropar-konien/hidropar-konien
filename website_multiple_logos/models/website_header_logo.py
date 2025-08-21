@@ -3,6 +3,7 @@
 
 from odoo import fields, models
 
+
 class WebsiteHeaderLogo(models.Model):
     _name = 'website.header.logo'
     _description = 'Website Header Logo'

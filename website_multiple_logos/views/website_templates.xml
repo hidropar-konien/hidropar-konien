@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Asset registration -->
+    <template id="assets_frontend_sticky_header" name="Sticky Header Assets" inherit_id="website.assets_frontend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/css" href="/website_multiple_logos/static/src/css/website_multiple_logos.css"/>
+            <script type="text/javascript" src="/website_multiple_logos/static/src/js/website_multiple_logos.js"></script>
+        </xpath>
+    </template>
+
     <template id="layout_multiple_logos" inherit_id="website.layout" name="Show Multiple Logos">
         <xpath expr="//header//a[hasclass('navbar-brand')]" position="replace">
             <!-- If custom logos are defined, loop through them -->

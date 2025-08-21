@@ -55,3 +55,23 @@ body.o_header_is_sticky header#top {
     height: auto;
     width: auto;
 }
+
+#sticky-header.header-logo-multiple {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    background: #fff;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.multiple-logos img {
+    margin-right: 16px;
+    max-height: 60px;
+    height: auto;
+    width: auto;
+}

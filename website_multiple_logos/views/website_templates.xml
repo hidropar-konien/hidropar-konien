@@ -70,4 +70,18 @@
             </header>
         </xpath>
     </template>
+
+    <t t-name="website.header" t-inherit="website.layout" t-inherit-mode="extension">
+        <xpath expr="//header" position="replace">
+            <header id="sticky-header" class="header-logo-multiple">
+                <!-- Logo alanı -->
+                <div class="multiple-logos">
+                    <t t-foreach="website.header_logos" t-as="logo">
+                        <img t-att-src="logo.url" alt="Logo"/>
+                    </t>
+                </div>
+                <!-- Diğer header içerikleri -->
+            </header>
+        </xpath>
+    </t>
 </odoo>

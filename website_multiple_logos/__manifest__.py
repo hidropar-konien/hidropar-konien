@@ -14,6 +14,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/assets.xml',
         'views/website_header_logo_views.xml',
         'views/res_config_settings_views.xml',
         'views/website_templates.xml',

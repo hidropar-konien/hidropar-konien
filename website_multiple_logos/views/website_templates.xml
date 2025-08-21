@@ -8,14 +8,10 @@
         </xpath>
     </template>
 
-    <!--
-        This template completely replaces the website's header.
-        This is a more robust approach that prevents conflicts with other modules or default styles
-        that might interfere with the sticky behavior.
-    -->
+    <!-- Sticky Header with Multiple Logos -->
     <template id="layout_multiple_logos" inherit_id="website.layout" name="Sticky Header with Multiple Logos">
         <xpath expr="//div[@id='wrapwrap']/header" position="replace">
-            <header id="top">
+            <header id="sticky-header" class="header-logo-multiple">
                 <div class="navbar navbar-default navbar-static-top">
                     <div class="container">
                         <div class="navbar-header">
@@ -25,7 +21,6 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-
                             <!-- Custom Logo Logic -->
                             <t t-if="website and website.header_logo_ids">
                                 <div style="float: left;">
@@ -45,11 +40,9 @@
                         </div>
                         <div class="collapse navbar-collapse navbar-top-collapse">
                             <ul class="nav navbar-nav navbar-right" id="top_menu">
-                                <!-- Re-implement the main menu logic from website module -->
                                 <t t-foreach="website.menu_id.child_id" t-as="submenu">
                                     <t t-call="website.submenu"/>
                                 </t>
-                                <!-- Re-implement the user menu logic from portal module -->
                                 <li class="divider" t-if="website.user_id != user_id"/>
                                 <li class="dropdown" t-if="website.user_id != user_id">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -70,18 +63,4 @@
             </header>
         </xpath>
     </template>
-
-    <t t-name="website.header" t-inherit="website.layout" t-inherit-mode="extension">
-        <xpath expr="//header" position="replace">
-            <header id="sticky-header" class="header-logo-multiple">
-                <!-- Logo alanı -->
-                <div class="multiple-logos">
-                    <t t-foreach="website.header_logos" t-as="logo">
-                        <img t-att-src="logo.url" alt="Logo"/>
-                    </t>
-                </div>
-                <!-- Diğer header içerikleri -->
-            </header>
-        </xpath>
-    </t>
 </odoo>

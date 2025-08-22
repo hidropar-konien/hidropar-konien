@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_website_header_logo_tree" model="ir.ui.view">
+        <field name="name">website.header.logo.tree</field>
+        <field name="model">website.header.logo</field>
+        <field name="arch" type="xml">
+            <tree string="Header Logos" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="logo" widget="image" class="oe_avatar"/>
+                <field name="url"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

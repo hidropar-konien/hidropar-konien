@@ -10,9 +10,9 @@ body.o_connected_user .header-logo-multiple {
 body:not(.o_connected_user) {
     padding-top: 0 !important;
 }
-body:not(.o_connected_user) .header-logo-multiple {
+/* body:not(.o_connected_user) .header-logo-multiple {
     top: 0;
-}
+} */
 /*
   This is the final, "bulletproof" version for the sticky header.
   It uses high specificity and resets potential conflicting properties.

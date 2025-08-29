@@ -38,16 +38,20 @@ body.o_header_is_sticky header#top {
 
 /* Header'ı sticky yap ve logoları hizala */
 .header-logo-multiple {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 1000;
-    background: #fff;
+    left: 0;
     width: 100%;
+    z-index: 1500;
+    background: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     min-height: 70px;
     display: flex;
     align-items: stretch;
     padding: 0;
+}
+body {
+    padding-top: 70px;
 }
 
 .navbar.navbar-default.navbar-static-top > .container {

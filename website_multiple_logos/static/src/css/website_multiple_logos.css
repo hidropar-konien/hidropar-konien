@@ -2,9 +2,9 @@
 body.o_connected_user {
     padding-top: 70px;
 }
-body.o_connected_user .header-logo-multiple {
+/* body.o_connected_user .header-logo-multiple {
     top: 0;
-}
+} */
 
 /* Kullanıcı login değilse header ve body padding-top */
 body:not(.o_connected_user) {

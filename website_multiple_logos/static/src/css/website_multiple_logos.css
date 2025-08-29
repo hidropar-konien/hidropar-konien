@@ -41,7 +41,7 @@ body.o_header_is_sticky header#top {
 
     position: sticky;
     top: 0;
-    z-index: 1050;
+    z-index: 3000;
     background: #fff;
     width: 100%;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);

@@ -39,7 +39,7 @@ body.o_header_is_sticky header#top {
 /* Header'ı sticky yap ve logoları hizala */
 .header-logo-multiple {
     position: fixed;
-    top: 0;
+    /* top: 0; */
     left: 0;
     width: 100%;
     z-index: 1000;

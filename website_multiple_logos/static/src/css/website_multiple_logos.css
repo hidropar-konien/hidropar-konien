@@ -38,25 +38,24 @@ body.o_header_is_sticky header#top {
 
 /* Header'ı sticky yap ve logoları hizala */
 .header-logo-multiple {
-
     position: sticky;
     top: 0;
-    z-index: 3000;
+    z-index: 1000;
     background: #fff;
     width: 100%;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     min-height: 70px;
     display: flex;
     align-items: stretch;
-    padding: 0 !important;
+    padding: 0;
 }
 
 .navbar.navbar-default.navbar-static-top > .container {
-    display: flex !important;
-    align-items: center !important;
-    min-height: 70px !important;
+    display: flex;
+    align-items: center;
+    min-height: 70px;
     justify-content: space-between;
-    padding: 0 15px !important;
+    padding: 0 15px;
 }
 
 .multiple-logos {
@@ -75,9 +74,8 @@ body.o_header_is_sticky header#top {
     padding: 0;
     object-fit: contain;
     display: block;
-    vertical-align: middle;
-    /* Negatif margin ile yukarı çek */
-    margin-top: -4px;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .navbar-header {

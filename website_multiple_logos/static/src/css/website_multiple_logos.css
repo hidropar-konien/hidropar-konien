@@ -4,7 +4,7 @@ body.o_connected_user {
 }
 
 .container {
-    padding-top: 70px !important;
+    padding-top: 70px;
 }
 /* body.o_connected_user .header-logo-multiple {
     top: 0;

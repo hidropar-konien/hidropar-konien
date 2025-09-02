@@ -2,6 +2,10 @@
 body.o_connected_user {
     padding-top: 70px;
 }
+
+.container {
+    padding-top: 70px;
+}
 /* body.o_connected_user .header-logo-multiple {
     top: 0;
 } */

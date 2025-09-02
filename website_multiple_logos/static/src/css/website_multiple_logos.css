@@ -3,7 +3,7 @@ body.o_connected_user {
     padding-top: 70px;
 }
 
-body.container {
+.container {
     padding-top: 70px !important;
 }
 /* body.o_connected_user .header-logo-multiple {

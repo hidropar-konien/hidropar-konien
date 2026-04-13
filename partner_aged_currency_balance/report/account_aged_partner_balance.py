@@ -115,7 +115,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             tuple(move_state), tuple(account_type), date_from, tuple(partner_ids), date_from, tuple(company_ids)))
         aml_ids = cr.fetchall()
         aml_ids = aml_ids and [x[0] for x in aml_ids] or []
-        for line in self.env['account.move.line'].browse(aml_ids):
+        for line in self.env['account.move.line'].sudo().browse(aml_ids):
             partner_currency = select_currency.with_context(
                                     currency_rate_type_from=line.partner_id.customer_currency_rate_type_id,
                                     currency_rate_type_to=line.partner_id.customer_currency_rate_type_id,
@@ -257,7 +257,7 @@ class ReportAgedPartnerBalance(models.AbstractModel):
             partners_amount = {}
             aml_ids = cr.fetchall()
             aml_ids = aml_ids and [x[0] for x in aml_ids] or []
-            for line in self.env['account.move.line'].browse(aml_ids).with_context(prefetch_fields=False):
+            for line in self.env['account.move.line'].sudo().browse(aml_ids).with_context(prefetch_fields=False):
                 partner_currency = select_currency.with_context(
                         currency_rate_type_from=line.partner_id.customer_currency_rate_type_id,
                         currency_rate_type_to=line.partner_id.customer_currency_rate_type_id,

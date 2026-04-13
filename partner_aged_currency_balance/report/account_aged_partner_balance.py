@@ -75,7 +75,11 @@ class ReportAgedPartnerBalance(models.AbstractModel):
                         )
                     )
                 AND (l.date <= %s)
-                AND l.company_id IN %s  ''' + partner_filter + '''
+                AND l.company_id IN %s
+                AND (l.partner_id IS NULL OR l.partner_id NOT IN (
+                    SELECT address_home_id FROM hr_employee
+                    WHERE address_home_id IS NOT NULL
+                ))  ''' + partner_filter + '''
             ORDER BY UPPER(res_partner.name)'''
         cr.execute(query, arg_list)
 
